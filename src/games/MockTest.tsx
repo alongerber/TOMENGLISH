@@ -190,11 +190,11 @@ export function MockTest() {
       .map(([name]) => name);
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="card-premium p-8 text-center max-w-lg w-full"
+          className="card-3d p-8 text-center max-w-lg w-full"
         >
           <div className="text-5xl mb-4">📝</div>
           <h2 className="text-2xl font-bold mb-2">תוצאות המבחן</h2>
@@ -243,10 +243,10 @@ export function MockTest() {
           </div>
 
           <div className="flex gap-3 justify-center">
-            <button onClick={() => { setCurrentQ(0); setAnswers(new Array(questions.length).fill(null)); setShowResults(false); startTime.current = Date.now(); }} className="btn-game btn-game-primary">
+            <button onClick={() => { setCurrentQ(0); setAnswers(new Array(questions.length).fill(null)); setShowResults(false); startTime.current = Date.now(); }} className="btn-3d btn-3d-primary">
               נסה שוב 🔄
             </button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">
               חזרה 🏠
             </button>
           </div>
@@ -262,7 +262,7 @@ export function MockTest() {
   const sectionIdx = currentQ - sectionStart;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader
         title="מבחן דמה"
         emoji="📝"
@@ -286,7 +286,7 @@ export function MockTest() {
         </div>
 
         {/* Question card */}
-        <div className="card-premium p-6 mb-6 text-center">
+        <div className="card-3d p-6 mb-6 text-center">
           <div className="text-4xl mb-3">{q.promptEmoji}</div>
           <p className="text-xl font-bold" dir="ltr">{q.prompt}</p>
           <p className="text-sm text-gray-400 mt-2">שאלה {currentQ + 1} מתוך {questions.length}</p>
@@ -300,7 +300,7 @@ export function MockTest() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleAnswer(idx)}
-              className="card-premium p-4 text-center"
+              className="card-3d p-4 text-center"
             >
               {opt.emoji && <span className="text-xl mr-2">{opt.emoji}</span>}
               <span className="text-lg font-bold font-mono" dir="ltr">{opt.text}</span>

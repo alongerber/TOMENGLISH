@@ -11,21 +11,32 @@ export function FeedbackOverlay({ show, correct, message }: FeedbackOverlayProps
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
+          initial={{ opacity: 0, scale: 0.3 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
         >
           <div
-            className={`px-8 py-6 rounded-2xl text-4xl font-bold shadow-2xl ${
-              correct
-                ? 'bg-green-50 text-green-600 border-2 border-green-200'
-                : 'bg-red-50 text-red-500 border-2 border-red-200'
+            className={`px-10 py-8 rounded-3xl text-center ${
+              correct ? 'feedback-correct' : 'feedback-wrong'
             }`}
+            style={{
+              boxShadow: correct
+                ? '0 8px 0 #009874, 0 12px 40px rgba(0, 184, 148, 0.3)'
+                : '0 8px 0 #b52828, 0 12px 40px rgba(214, 48, 49, 0.3)',
+            }}
           >
-            <div className="text-5xl mb-2">{correct ? '🎉' : '😅'}</div>
-            <div className="text-xl">{message || (correct ? 'מעולה!' : 'נסה שוב!')}</div>
+            <motion.div
+              className="text-6xl mb-3"
+              animate={{ scale: [1, 1.3, 1], rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 0.5 }}
+            >
+              {correct ? '🎉' : '😅'}
+            </motion.div>
+            <div className="text-2xl font-extrabold">
+              {message || (correct ? 'מעולה!' : 'נסה שוב!')}
+            </div>
           </div>
         </motion.div>
       )}

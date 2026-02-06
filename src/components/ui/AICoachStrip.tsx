@@ -67,7 +67,6 @@ export function AICoachStrip({
         mascot = 'encourage';
       }
     } else if (isCorrect === true) {
-      // Don't show message for every correct — only streaks
       return;
     }
 
@@ -87,7 +86,7 @@ export function AICoachStrip({
     showMessage(hint, 'idle');
   }, [module, showMessage]);
 
-  // Idle timer: 15 seconds of no interaction
+  // Idle timer: 15 seconds
   useEffect(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     idleSentRef.current = false;
@@ -128,25 +127,27 @@ export function AICoachStrip({
       <AnimatePresence mode="wait">
         <motion.div
           key={message}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -5 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -5, scale: 0.95 }}
+          transition={{ duration: 0.3, type: 'spring', stiffness: 200, damping: 20 }}
           className={`coach-strip ${isActive ? 'active' : ''}`}
         >
-          <div className="shrink-0">
+          {/* Mascot in bubble */}
+          <div className="shrink-0 animate-bounce-subtle">
             <MascotImage state={mascotState} size="sm" />
           </div>
 
+          {/* Message */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm leading-relaxed text-gray-700">{message}</p>
+            <p className="text-sm leading-relaxed font-bold text-gray-700">{message}</p>
             <AnimatePresence>
               {showMore && moreHint && (
                 <motion.p
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="text-sm text-indigo-600 mt-1"
+                  className="text-sm text-indigo-600 mt-1 font-bold"
                 >
                   💡 {moreHint}
                 </motion.p>
@@ -154,13 +155,16 @@ export function AICoachStrip({
             </AnimatePresence>
           </div>
 
-          <button
+          {/* Golden hint button */}
+          <motion.button
             onClick={handleMoreHint}
             disabled={moreLoading}
-            className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-800 shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92, y: 2 }}
+            className="btn-3d btn-3d-primary shrink-0 !py-2 !px-4 !text-sm !min-h-0 disabled:opacity-50"
           >
-            {moreLoading ? '⏳' : '💡 עוד'}
-          </button>
+            {moreLoading ? '⏳' : '💡 רמז חכם'}
+          </motion.button>
         </motion.div>
       </AnimatePresence>
     </div>
