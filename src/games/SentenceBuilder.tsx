@@ -172,16 +172,16 @@ export function SentenceBuilder() {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-3d p-8 text-center max-w-md">
           <div className="text-5xl mb-4">🧩</div>
           <h2 className="text-2xl font-bold mb-2">סיימת!</h2>
           <p className="text-gray-500 mb-6">בניית משפטים הושלמה</p>
           <div className="flex gap-3 justify-center">
-            <button onClick={() => { setCurrentRound(0); setShowComplete(false); }} className="btn-game btn-game-primary">
+            <button onClick={() => { setCurrentRound(0); setShowComplete(false); }} className="btn-3d btn-3d-primary">
               עוד סיבוב 🔄
             </button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">
               חזרה 🏠
             </button>
           </div>
@@ -193,7 +193,7 @@ export function SentenceBuilder() {
   if (!round) return null;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader
         title="בונה משפטים"
         emoji="🧩"
@@ -226,7 +226,7 @@ export function SentenceBuilder() {
         </div>
 
         {/* Sentence building area */}
-        <div className="card-premium p-6 mb-6">
+        <div className="card-3d p-6 mb-6">
           <div className="min-h-[60px] flex flex-wrap gap-2 justify-center items-center mb-4" dir="ltr">
             <AnimatePresence>
               {placed.map((part, i) => (

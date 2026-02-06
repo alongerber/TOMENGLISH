@@ -51,7 +51,7 @@ describe('Welcome Screen', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/מסע הקסם באנגלית/)).toBeInTheDocument();
+    expect(screen.getByText(/מסע הקסם/)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/איך קוראים לך/)).toBeInTheDocument();
   });
 
@@ -89,10 +89,14 @@ describe('Home Screen', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getAllByText('מעבדת Magic E').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('בונה משפטים').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('תג מחיר').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('אוצר מילים').length).toBeGreaterThanOrEqual(1);
+    // Titles are now split into title + subtitle
+    expect(screen.getAllByText(/מעבדת/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Magic E/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/בונה/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/משפטים/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/תג/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/מחיר/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/אוצר מילים/).length).toBeGreaterThanOrEqual(1);
   });
 
   it('should show mock test section', () => {

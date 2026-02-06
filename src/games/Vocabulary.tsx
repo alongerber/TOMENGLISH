@@ -32,7 +32,7 @@ export function Vocabulary() {
 
   if (!selectedMode) {
     return (
-      <div className="min-h-screen p-4">
+      <div className="game-background min-h-screen p-4">
         <GameHeader
           title="אוצר מילים חזותי"
           emoji="🎯"
@@ -50,7 +50,7 @@ export function Vocabulary() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => setSelectedMode(mode.id)}
-                className="card-premium p-5 text-right flex items-center gap-4"
+                className="card-3d p-5 text-right flex items-center gap-4"
               >
                 <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-3xl shrink-0">
                   {mode.emoji}
@@ -150,14 +150,14 @@ function MemoryGame({ onBack }: { onBack: () => void }) {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-3d p-8 text-center max-w-md">
           <div className="text-5xl mb-4">🧠</div>
           <h2 className="text-2xl font-bold mb-2">זיכרון מעולה!</h2>
           <p className="text-gray-500 mb-6">מצאת את כל הזוגות</p>
           <div className="flex gap-3 justify-center">
-            <button onClick={onBack} className="btn-game btn-game-primary">עוד משחק 🔄</button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">חזרה 🏠</button>
+            <button onClick={onBack} className="btn-3d btn-3d-primary">עוד משחק 🔄</button>
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">חזרה 🏠</button>
           </div>
         </motion.div>
       </div>
@@ -165,7 +165,7 @@ function MemoryGame({ onBack }: { onBack: () => void }) {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader title="זיכרון" emoji="🧠" color="#10B981" onBack={onBack} />
       <div className="max-w-lg mx-auto">
         <p className="text-center text-gray-500 text-sm mb-4">👆 מצא זוגות: אימוג'י ↔ מילה</p>
@@ -265,8 +265,8 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-3d p-8 text-center max-w-md">
           <div className="text-5xl mb-4">⚡</div>
           <h2 className="text-2xl font-bold mb-2">סיום!</h2>
           <p className="text-gray-500 mb-2">{correctCount}/{TOTAL} תשובות נכונות</p>
@@ -278,9 +278,9 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
             gameComplete={true}
           />
           <div className="flex gap-3 justify-center mt-4">
-            <button onClick={() => { setCurrentIdx(0); setCorrectCount(0); setShowComplete(false); }} className="btn-game btn-game-primary">עוד סיבוב 🔄</button>
-            <button onClick={onBack} className="btn-game btn-game-secondary">בחר משחק</button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">חזרה 🏠</button>
+            <button onClick={() => { setCurrentIdx(0); setCorrectCount(0); setShowComplete(false); }} className="btn-3d btn-3d-primary">עוד סיבוב 🔄</button>
+            <button onClick={onBack} className="btn-3d btn-3d-secondary">בחר משחק</button>
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">חזרה 🏠</button>
           </div>
         </motion.div>
       </div>
@@ -290,10 +290,10 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
   if (!targetWord) return null;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader title="מהירות" emoji="⚡" color="#10B981" onBack={onBack} progress={currentIdx / TOTAL} />
       <div className="max-w-lg mx-auto">
-        <div className="card-premium p-8 text-center mb-6">
+        <div className="card-3d p-8 text-center mb-6">
           <div className="text-6xl mb-4">{targetWord.emoji}</div>
           <p className="text-gray-500">{targetWord.hebrew}</p>
         </div>
@@ -305,7 +305,7 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleChoice(opt)}
-              className="card-premium p-4 text-center text-lg font-mono font-bold"
+              className="card-3d p-4 text-center text-lg font-mono font-bold"
               dir="ltr"
             >
               {opt.word}
@@ -396,8 +396,8 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-3d p-8 text-center max-w-md">
           <div className="text-5xl mb-4">🔦</div>
           <h2 className="text-2xl font-bold mb-2">כל הכבוד!</h2>
           <AICoachStrip
@@ -408,9 +408,9 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
             gameComplete={true}
           />
           <div className="flex gap-3 justify-center mt-4">
-            <button onClick={() => { setCurrentIdx(0); setShowComplete(false); }} className="btn-game btn-game-primary">עוד סיבוב 🔄</button>
-            <button onClick={onBack} className="btn-game btn-game-secondary">בחר משחק</button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">חזרה 🏠</button>
+            <button onClick={() => { setCurrentIdx(0); setShowComplete(false); }} className="btn-3d btn-3d-primary">עוד סיבוב 🔄</button>
+            <button onClick={onBack} className="btn-3d btn-3d-secondary">בחר משחק</button>
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">חזרה 🏠</button>
           </div>
         </motion.div>
       </div>
@@ -420,10 +420,10 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
   if (!targetWord) return null;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader title="זרקור" emoji="🔦" color="#10B981" onBack={onBack} progress={currentIdx / TOTAL} />
       <div className="max-w-lg mx-auto">
-        <div className="card-premium p-8 text-center mb-6">
+        <div className="card-3d p-8 text-center mb-6">
           <div
             className="text-8xl mb-4 transition-all duration-200"
             style={{ filter: `blur(${blur}px)` }}
@@ -442,7 +442,7 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleChoice(opt)}
-              className="card-premium p-4 text-center"
+              className="card-3d p-4 text-center"
             >
               <span className="text-lg font-mono font-bold" dir="ltr">{opt.word}</span>
               <br />

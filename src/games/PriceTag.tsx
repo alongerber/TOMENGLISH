@@ -121,16 +121,16 @@ export function PriceTag() {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-3d p-8 text-center max-w-md">
           <div className="text-5xl mb-4">💰</div>
           <h2 className="text-2xl font-bold mb-2">קניות הושלמו!</h2>
           <p className="text-gray-500 mb-6">כל תגי המחיר תואמו בהצלחה</p>
           <div className="flex gap-3 justify-center">
-            <button onClick={() => { setCurrentRound(0); setShowComplete(false); }} className="btn-game btn-game-primary">
+            <button onClick={() => { setCurrentRound(0); setShowComplete(false); }} className="btn-3d btn-3d-primary">
               עוד סיבוב 🔄
             </button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">
               חזרה 🏠
             </button>
           </div>
@@ -142,7 +142,7 @@ export function PriceTag() {
   if (!round) return null;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader
         title="תג מחיר"
         emoji="💰"
@@ -153,7 +153,7 @@ export function PriceTag() {
 
       <div className="max-w-lg mx-auto">
         {/* Price display */}
-        <div className="card-premium p-6 mb-6 text-center">
+        <div className="card-3d p-6 mb-6 text-center">
           <div className="text-lg text-gray-500 mb-2">🏷️ המחיר:</div>
           <div className="text-4xl font-bold text-amber-600 mb-1" dir="ltr">
             ${round.numericValue}
@@ -227,7 +227,7 @@ export function PriceTag() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="card-premium p-4 mb-4 text-center"
+              className="card-3d p-4 mb-4 text-center"
             >
               <div className="flex items-center justify-center gap-2 text-lg font-mono" dir="ltr">
                 <span className="text-gray-400">The</span>
@@ -253,7 +253,7 @@ export function PriceTag() {
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-center mb-4"
           >
-            <button onClick={checkAnswer} className="btn-game btn-game-success text-xl">
+            <button onClick={checkAnswer} className="btn-3d btn-3d-success text-xl">
               ✓ בדיקה
             </button>
           </motion.div>

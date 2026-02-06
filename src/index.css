@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -13,7 +13,6 @@
   --color-success-light: #55efc4;
   --color-danger: #d63031;
   --color-danger-light: #ff7675;
-  --color-bg: #e8f4fd;
   --color-text: #2d3436;
   --color-text-light: #636e72;
   --color-magic-e: #6C5CE7;
@@ -44,43 +43,80 @@ body {
 }
 
 /* ═══════════════════════════════════
-   Premium Background
+   IMMERSIVE WORLD BACKGROUND
+   Layered illustrated scene
    ═══════════════════════════════════ */
 .app-background {
-  background: linear-gradient(180deg, #74b9ff 0%, #a8d8ff 25%, #dfe6e9 50%, #ffffff 100%);
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  /* Rich sky gradient - deeper, more vivid */
+  background:
+    linear-gradient(180deg,
+      #1e3c72 0%,      /* deep blue sky top */
+      #2a5298 15%,      /* mid blue */
+      #5b86e5 30%,      /* bright sky */
+      #87CEEB 50%,      /* light sky */
+      #b8e6b8 70%,      /* hint of green horizon */
+      #90c695 85%,      /* grass area */
+      #6db36b 100%      /* dark grass bottom */
+    );
 }
 
+/* Floating clouds - pure CSS */
 .app-background::before {
   content: '';
   position: fixed;
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, #a29bfe 0%, transparent 70%);
-  top: -80px;
-  right: -80px;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.35;
-  z-index: 0;
+  top: 8%;
+  left: 10%;
+  width: 200px;
+  height: 60px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50px;
+  box-shadow:
+    60px -20px 0 10px rgba(255,255,255,0.6),
+    -30px -10px 0 20px rgba(255,255,255,0.5),
+    80px 0px 0 5px rgba(255,255,255,0.4);
+  animation: cloud-float 20s linear infinite;
   pointer-events: none;
+  z-index: 0;
 }
 
 .app-background::after {
   content: '';
   position: fixed;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, #fdcb6e 0%, transparent 70%);
-  bottom: -120px;
-  left: -100px;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.3;
-  z-index: 0;
+  top: 15%;
+  right: 5%;
+  width: 150px;
+  height: 45px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 40px;
+  box-shadow:
+    40px -15px 0 8px rgba(255,255,255,0.4),
+    -25px -8px 0 15px rgba(255,255,255,0.35);
+  animation: cloud-float 25s linear infinite reverse;
   pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes cloud-float {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(40px); }
+  100% { transform: translateX(0); }
+}
+
+/* Game screens get lighter background */
+.game-background {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg,
+      #87CEEB 0%,
+      #B0E0E6 30%,
+      #E8F8E8 60%,
+      #f0f9f0 100%
+    );
 }
 
 /* ═══════════════════════════════════
@@ -88,12 +124,22 @@ body {
    ═══════════════════════════════════ */
 h1, h2, h3, h4, .font-heading {
   font-family: 'Rubik', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .font-english, [dir="ltr"] {
   font-family: 'Nunito', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+/* Giant playful title text */
+.title-magical {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-shadow:
+    0 4px 0 rgba(0,0,0,0.1),
+    0 8px 20px rgba(0,0,0,0.1);
 }
 
 /* ═══════════════════════════════════
@@ -104,11 +150,22 @@ h1, h2, h3, h4, .font-heading {
 ::-webkit-scrollbar-thumb { background: #b2bec3; border-radius: 3px; }
 
 /* ═══════════════════════════════════
-   Animations
+   ANIMATIONS — Rich & Playful
    ═══════════════════════════════════ */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-rotate {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
 }
 
 @keyframes pulse-glow {
@@ -124,7 +181,8 @@ h1, h2, h3, h4, .font-heading {
 
 @keyframes pop-in {
   0% { transform: scale(0); opacity: 0; }
-  70% { transform: scale(1.1); }
+  50% { transform: scale(1.15); }
+  70% { transform: scale(0.95); }
   100% { transform: scale(1); opacity: 1; }
 }
 
@@ -135,239 +193,383 @@ h1, h2, h3, h4, .font-heading {
 
 @keyframes glow-success {
   0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.5); }
-  70% { box-shadow: 0 0 0 12px rgba(0, 184, 148, 0); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); }
   100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0) translateY(40px); opacity: 0; }
+  50% { transform: scale(1.1) translateY(-10px); }
+  70% { transform: scale(0.95) translateY(2px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 @keyframes bounce-subtle {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.02); }
+  50% { transform: translateY(-8px) scale(1.03); }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes rainbow-border {
+  0% { border-color: #6C5CE7; }
+  25% { border-color: #00b894; }
+  50% { border-color: #f39c12; }
+  75% { border-color: #e17055; }
+  100% { border-color: #6C5CE7; }
+}
+
 @keyframes pulse-btn {
-  0%, 100% { box-shadow: 0 4px 16px rgba(243, 156, 18, 0.4); }
-  50% { box-shadow: 0 6px 28px rgba(243, 156, 18, 0.65); }
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 0 #c27d0a, 0 8px 20px rgba(243, 156, 18, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 6px 0 #c27d0a, 0 12px 30px rgba(243, 156, 18, 0.6); }
 }
 
 .animate-float { animation: float 3s ease-in-out infinite; }
+.animate-float-rotate { animation: float-rotate 4s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 .animate-shake { animation: shake 0.5s ease-in-out; }
-.animate-pop-in { animation: pop-in 0.3s ease-out; }
+.animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .animate-bounce-subtle { animation: bounce-subtle 2.5s ease-in-out infinite; }
-.animate-slide-up { animation: slide-up 0.4s ease-out; }
+.animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-slide-up { animation: slide-up 0.5s ease-out; }
 .animate-glow-success { animation: glow-success 0.6s ease-out; }
+.animate-sparkle { animation: sparkle 1.5s ease-in-out infinite; }
 
 /* ═══════════════════════════════════
-   Premium Cards – Glassmorphism 3D
+   3D CARDS — Thick, tactile, kid-friendly
    ═══════════════════════════════════ */
-.card-premium {
-  background: rgba(255, 255, 255, 0.75);
+.card-3d {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 3px solid rgba(0,0,0,0.06);
+  border-bottom: 6px solid rgba(0,0,0,0.1);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.05),
+    0 8px 20px rgba(0,0,0,0.08),
+    0 2px 4px rgba(0,0,0,0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-bottom-width 0.1s ease;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.card-3d:hover {
+  transform: translateY(-3px);
+  border-bottom-width: 8px;
+  box-shadow:
+    0 6px 0 rgba(0,0,0,0.06),
+    0 12px 30px rgba(0,0,0,0.12),
+    0 4px 8px rgba(0,0,0,0.08);
+}
+
+.card-3d:active {
+  transform: translateY(2px);
+  border-bottom-width: 3px;
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.04),
+    0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Module-colored 3D cards — VIVID backgrounds */
+.card-magic-e {
+  background: linear-gradient(135deg, #e8e0ff 0%, #f3efff 100%);
+  border-color: #6C5CE7;
+  border-bottom-color: #5541d6;
+}
+
+.card-clothing {
+  background: linear-gradient(135deg, #d4f5ec 0%, #eafaf5 100%);
+  border-color: #00b894;
+  border-bottom-color: #009874;
+}
+
+.card-numbers {
+  background: linear-gradient(135deg, #fff3d4 0%, #fff9ea 100%);
+  border-color: #f39c12;
+  border-bottom-color: #d68910;
+}
+
+.card-house {
+  background: linear-gradient(135deg, #fde0d8 0%, #fef0ec 100%);
+  border-color: #e17055;
+  border-bottom-color: #c05040;
+}
+
+/* Glass card for game areas */
+.card-glass {
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 20px;
+  border-radius: 24px;
+  border: 2px solid rgba(255,255,255,0.8);
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.06),
-    0 10px 20px rgba(0, 0, 0, 0.04),
-    0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    0 8px 32px rgba(0,0,0,0.08),
+    0 2px 8px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* Legacy alias */
+.card-premium {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  border: 2px solid rgba(255,255,255,0.6);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
   position: relative;
   z-index: 1;
 }
 
-.card-premium:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    0 8px 12px rgba(0, 0, 0, 0.09),
-    0 20px 40px rgba(0, 0, 0, 0.07),
-    0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Module-colored cards */
-.card-magic-e {
-  background: linear-gradient(135deg, rgba(108, 92, 231, 0.12) 0%, rgba(162, 155, 254, 0.08) 100%);
-  border: 1.5px solid rgba(108, 92, 231, 0.18);
-}
-.card-magic-e:hover { border-color: rgba(108, 92, 231, 0.35); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.15); }
-
-.card-clothing {
-  background: linear-gradient(135deg, rgba(0, 184, 148, 0.12) 0%, rgba(85, 239, 196, 0.08) 100%);
-  border: 1.5px solid rgba(0, 184, 148, 0.18);
-}
-.card-clothing:hover { border-color: rgba(0, 184, 148, 0.35); box-shadow: 0 8px 24px rgba(0, 184, 148, 0.15); }
-
-.card-numbers {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.12) 0%, rgba(253, 203, 110, 0.08) 100%);
-  border: 1.5px solid rgba(243, 156, 18, 0.18);
-}
-.card-numbers:hover { border-color: rgba(243, 156, 18, 0.35); box-shadow: 0 8px 24px rgba(243, 156, 18, 0.15); }
-
-.card-house {
-  background: linear-gradient(135deg, rgba(225, 112, 85, 0.12) 0%, rgba(250, 177, 160, 0.08) 100%);
-  border: 1.5px solid rgba(225, 112, 85, 0.18);
-}
-.card-house:hover { border-color: rgba(225, 112, 85, 0.35); box-shadow: 0 8px 24px rgba(225, 112, 85, 0.15); }
-
 /* ═══════════════════════════════════
-   Buttons – Premium kids style
+   3D BUTTONS — Chunky, tactile, fun!
    ═══════════════════════════════════ */
-.btn-game {
-  padding: 14px 28px;
-  border-radius: 16px;
+.btn-3d {
+  padding: 16px 32px;
+  border-radius: 18px;
   font-family: 'Rubik', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   border: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
   position: relative;
-  overflow: hidden;
-  min-height: 48px;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-game:active {
-  transform: scale(0.95);
+.btn-3d:active {
+  transform: translateY(4px);
 }
 
-.btn-game-primary {
-  background: linear-gradient(135deg, #f39c12, #fdcb6e);
-  color: #2d3436;
-  box-shadow: 0 4px 16px rgba(243, 156, 18, 0.4);
+/* Primary: Gold/Orange — the main CTA */
+.btn-3d-primary {
+  background: linear-gradient(180deg, #FFD93D 0%, #F6A623 100%);
+  color: #5D4200;
+  box-shadow:
+    0 6px 0 #C27D0A,
+    0 8px 16px rgba(243, 156, 18, 0.35);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
 }
 
-.btn-game-primary:hover {
-  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
-  transform: translateY(-1px);
+.btn-3d-primary:hover {
+  background: linear-gradient(180deg, #FFE066 0%, #F9B233 100%);
+  box-shadow:
+    0 6px 0 #C27D0A,
+    0 10px 24px rgba(243, 156, 18, 0.45);
 }
 
-.btn-game-success {
-  background: linear-gradient(135deg, #00b894, #55efc4);
+.btn-3d-primary:active {
+  box-shadow:
+    0 2px 0 #C27D0A,
+    0 3px 8px rgba(243, 156, 18, 0.3);
+}
+
+/* Success: Green */
+.btn-3d-success {
+  background: linear-gradient(180deg, #55efc4 0%, #00b894 100%);
+  color: #004D3D;
+  box-shadow:
+    0 6px 0 #009874,
+    0 8px 16px rgba(0, 184, 148, 0.3);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.btn-3d-success:active {
+  box-shadow: 0 2px 0 #009874, 0 3px 8px rgba(0, 184, 148, 0.2);
+}
+
+/* Purple */
+.btn-3d-purple {
+  background: linear-gradient(180deg, #a29bfe 0%, #6C5CE7 100%);
   color: white;
-  box-shadow: 0 4px 16px rgba(0, 184, 148, 0.35);
+  box-shadow:
+    0 6px 0 #4834d4,
+    0 8px 16px rgba(108, 92, 231, 0.3);
 }
 
-.btn-game-secondary {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  color: var(--color-text);
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.btn-3d-purple:active {
+  box-shadow: 0 2px 0 #4834d4, 0 3px 8px rgba(108, 92, 231, 0.2);
 }
 
-.btn-game-secondary:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(0, 0, 0, 0.12);
+/* Secondary: White/Light */
+.btn-3d-secondary {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
+  color: #555;
+  box-shadow:
+    0 4px 0 #d0d0d0,
+    0 6px 12px rgba(0,0,0,0.06);
+  border: 2px solid #e0e0e0;
 }
+
+.btn-3d-secondary:active {
+  box-shadow: 0 1px 0 #d0d0d0, 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* Legacy btn-game mappings */
+.btn-game { padding: 14px 28px; border-radius: 18px; font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 1.1rem; border: none; cursor: pointer; transition: all 0.1s ease; position: relative; min-height: 52px; user-select: none; }
+.btn-game:active { transform: translateY(3px); }
+.btn-game-primary { background: linear-gradient(180deg, #FFD93D 0%, #F6A623 100%); color: #5D4200; box-shadow: 0 5px 0 #C27D0A, 0 7px 14px rgba(243, 156, 18, 0.3); }
+.btn-game-primary:active { box-shadow: 0 2px 0 #C27D0A; }
+.btn-game-success { background: linear-gradient(180deg, #55efc4 0%, #00b894 100%); color: #004D3D; box-shadow: 0 5px 0 #009874, 0 7px 14px rgba(0, 184, 148, 0.25); }
+.btn-game-success:active { box-shadow: 0 2px 0 #009874; }
+.btn-game-secondary { background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%); color: #555; box-shadow: 0 4px 0 #d0d0d0, 0 5px 10px rgba(0,0,0,0.05); border: 2px solid #e0e0e0; }
+.btn-game-secondary:active { box-shadow: 0 1px 0 #d0d0d0; }
 
 /* ═══════════════════════════════════
-   Word Chips
+   Word Chips — Chunky & colorful
    ═══════════════════════════════════ */
 .word-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  border-radius: 14px;
+  padding: 12px 20px;
+  border-radius: 16px;
   font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
-  border: 2.5px solid rgba(0, 0, 0, 0.06);
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: #ffffff;
+  border: 3px solid #e0e0e0;
+  border-bottom: 5px solid #d0d0d0;
   cursor: pointer;
   user-select: none;
-  transition: all 0.15s;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.1s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .word-chip:hover {
   border-color: var(--color-primary);
-  background: rgba(108, 92, 231, 0.08);
+  border-bottom-color: var(--color-primary-dark);
+  background: #f8f4ff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.12);
+}
+
+.word-chip:active {
+  transform: translateY(2px);
+  border-bottom-width: 3px;
 }
 
 .word-chip.selected {
   border-color: var(--color-primary);
-  background: rgba(108, 92, 231, 0.1);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2), 0 4px 12px rgba(108, 92, 231, 0.15);
+  border-bottom-color: var(--color-primary-dark);
+  background: #ede8ff;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
 }
 
 .word-chip.correct {
   border-color: var(--color-success);
-  background: rgba(0, 184, 148, 0.1);
+  border-bottom-color: #009874;
+  background: #d4f5ec;
   animation: glow-success 0.6s ease-out;
 }
 
 .word-chip.incorrect {
   border-color: var(--color-danger);
-  background: rgba(214, 48, 49, 0.08);
+  border-bottom-color: #b52828;
+  background: #fde8e8;
   animation: shake 0.5s ease-in-out;
 }
 
 /* ═══════════════════════════════════
-   Progress Bar – with shimmer
+   Progress Bar — Chunky with sparkle
    ═══════════════════════════════════ */
 .progress-bar {
-  height: 10px;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.06);
+  height: 14px;
+  border-radius: 7px;
+  background: rgba(0,0,0,0.08);
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  border: 2px solid rgba(0,0,0,0.05);
 }
 
 .progress-bar-fill {
   height: 100%;
   border-radius: 5px;
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(90deg, #f39c12 0%, #fdcb6e 50%, #f39c12 100%);
+  background: linear-gradient(90deg, #FFD93D 0%, #F6A623 50%, #FFD93D 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
   position: relative;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 /* ═══════════════════════════════════
-   AI Coach Strip
+   AI Coach Strip — Big, friendly, present
    ═══════════════════════════════════ */
 .coach-strip {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(108, 92, 231, 0.12);
-  border-radius: 16px;
-  padding: 12px 16px;
+  background: linear-gradient(135deg, #fff9e6, #fff3cc);
+  border: 3px solid #f0d060;
+  border-bottom: 5px solid #d4b030;
+  border-radius: 20px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  gap: 14px;
+  box-shadow: 0 4px 12px rgba(240, 208, 96, 0.2);
+  transition: all 0.2s ease;
 }
 
 .coach-strip.active {
-  border-color: rgba(108, 92, 231, 0.25);
-  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.12);
+  border-color: #e8c020;
+  box-shadow: 0 4px 20px rgba(240, 208, 96, 0.35);
 }
 
 /* ═══════════════════════════════════
-   Glass Header
+   Glass Header — Game header bar
    ═══════════════════════════════════ */
 .glass-header {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 3px solid rgba(0,0,0,0.06);
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 /* ═══════════════════════════════════
-   Mascot
+   Mascot — SVG emoji fallback is styled
    ═══════════════════════════════════ */
+.mascot-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mascot-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+/* Mascot with background circle */
+.mascot-bubble {
+  background: linear-gradient(135deg, #FFD93D, #FFE880);
+  border-radius: 50%;
+  border: 4px solid #F6A623;
+  box-shadow:
+    0 4px 0 #C27D0A,
+    0 6px 16px rgba(243, 156, 18, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .mascot-container {
   position: relative;
   display: inline-block;
@@ -380,48 +582,55 @@ h1, h2, h3, h4, .font-heading {
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
 }
 
-.mascot-emoji {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* ═══════════════════════════════════
-   Decorative Elements
+   Decorative floating elements
    ═══════════════════════════════════ */
-.cloud {
+.floating-star {
   position: absolute;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  filter: blur(1px);
   pointer-events: none;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-.cloud::before,
-.cloud::after {
-  content: '';
+.floating-sparkle {
   position: absolute;
-  background: inherit;
-  border-radius: 50%;
-}
-
-.star-decoration {
-  position: absolute;
-  opacity: 0.15;
   pointer-events: none;
-  font-size: 1.5rem;
+  animation: sparkle 2s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════
-   Quiet Mode
+   Feedback Overlay — BIG & exciting
+   ═══════════════════════════════════ */
+.feedback-correct {
+  background: linear-gradient(135deg, #d4f5ec, #eafaf5);
+  border: 4px solid #00b894;
+  border-bottom: 7px solid #009874;
+}
+
+.feedback-wrong {
+  background: linear-gradient(135deg, #fde8e8, #fef2f2);
+  border: 4px solid #d63031;
+  border-bottom: 7px solid #b52828;
+}
+
+/* ═══════════════════════════════════
+   Quiet Mode & Accessibility
    ═══════════════════════════════════ */
 .quiet-mode .animate-float,
+.quiet-mode .animate-float-rotate,
+.quiet-mode .animate-wiggle,
 .quiet-mode .animate-pulse-glow,
-.quiet-mode .animate-bounce-subtle {
+.quiet-mode .animate-bounce-subtle,
+.quiet-mode .animate-sparkle {
   animation: none !important;
 }
 
 .quiet-mode .progress-bar-fill {
+  animation: none !important;
+}
+
+.quiet-mode .app-background::before,
+.quiet-mode .app-background::after {
   animation: none !important;
 }
 

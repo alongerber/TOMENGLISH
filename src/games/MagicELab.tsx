@@ -89,16 +89,25 @@ export function MagicELab() {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
-          <div className="text-5xl mb-4">✨</div>
-          <h2 className="text-2xl font-bold mb-2">כל הכבוד!</h2>
-          <p className="text-gray-500 mb-6">סיימת את מעבדת Magic E</p>
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+          className="card-3d p-8 text-center max-w-md"
+        >
+          <motion.div
+            className="text-6xl mb-4"
+            animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 0.8 }}
+          >✨</motion.div>
+          <h2 className="text-2xl font-extrabold mb-2">כל הכבוד!</h2>
+          <p className="text-gray-500 mb-6 font-bold">סיימת את מעבדת Magic E</p>
           <div className="flex gap-3 justify-center">
-            <button onClick={() => { setCurrentRound(0); setEDropped(false); setSliderPos(50); setAnswered(false); setShowComplete(false); }} className="btn-game btn-game-primary">
+            <button onClick={() => { setCurrentRound(0); setEDropped(false); setSliderPos(50); setAnswered(false); setShowComplete(false); }} className="btn-3d btn-3d-primary">
               עוד סיבוב 🔄
             </button>
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-secondary">
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-secondary">
               חזרה 🏠
             </button>
           </div>
@@ -114,7 +123,7 @@ export function MagicELab() {
   const hasE = round.word !== 'wake up'; // wake up is special
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader
         title="מעבדת Magic E"
         emoji="✨"
@@ -138,7 +147,7 @@ export function MagicELab() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="card-premium p-8 text-center mb-6"
+            className="card-3d p-8 text-center mb-6"
           >
             {round.mode === 'drag-e' ? (
               <DragEGame
@@ -209,7 +218,7 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onDrop}
-            className="mx-auto block w-16 h-16 rounded-2xl bg-purple-100 border-2 border-purple-300 text-3xl font-bold text-purple-600 cursor-grab active:cursor-grabbing"
+            className="btn-3d btn-3d-purple mx-auto !w-16 !h-16 !p-0 !rounded-2xl !text-3xl cursor-grab active:cursor-grabbing"
           >
             e
           </motion.button>
@@ -247,8 +256,8 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
             onDrop();
           }}
           whileHover={{ scale: 1.1 }}
-          className={`mx-auto w-16 h-16 rounded-2xl bg-purple-100 border-2 border-purple-300 text-3xl font-bold text-purple-600 flex items-center justify-center ${
-            dragging ? 'cursor-grabbing shadow-xl' : 'cursor-grab'
+          className={`btn-3d btn-3d-purple mx-auto !w-16 !h-16 !p-0 !rounded-2xl !text-3xl ${
+            dragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
           e

@@ -156,11 +156,11 @@ export function BossLevel() {
     const stars = won ? (hearts === MAX_HEARTS ? 3 : hearts >= 2 ? 2 : 1) : 0;
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="game-background min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="card-premium p-8 text-center max-w-md"
+          className="card-3d p-8 text-center max-w-md"
         >
           <div className="text-5xl mb-4">{won ? '🏆' : '💪'}</div>
           <h2 className="text-2xl font-bold mb-2">{won ? 'ניצחת את הבוס!' : 'לא נורא, נסה שוב!'}</h2>
@@ -174,7 +174,7 @@ export function BossLevel() {
             </p>
           )}
           <div className="flex gap-3 justify-center">
-            <button onClick={() => navigate('/home')} className="btn-game btn-game-primary">
+            <button onClick={() => navigate('/home')} className="btn-3d btn-3d-primary">
               חזרה 🏠
             </button>
           </div>
@@ -189,7 +189,7 @@ export function BossLevel() {
   const timePercent = timeLeft / BOSS_TIME_LIMIT;
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="game-background min-h-screen p-4">
       <GameHeader
         title={`👾 בוס - ${category === 'magic-e' ? 'Magic E' : category === 'clothing' ? 'בגדים' : category === 'numbers' ? 'מחירים' : 'בית'}`}
         emoji="👾"
@@ -219,7 +219,7 @@ export function BossLevel() {
         </div>
 
         {/* Question */}
-        <div className="card-premium p-6 mb-6 text-center">
+        <div className="card-3d p-6 mb-6 text-center">
           <div className="text-4xl mb-3">{q.promptEmoji}</div>
           {q.type === 'pick-word' && (
             <div>
@@ -248,7 +248,7 @@ export function BossLevel() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleAnswer(opt)}
-              className="card-premium p-4 text-center"
+              className="card-3d p-4 text-center"
             >
               {q.type === 'pick-word' && (
                 <span className="text-lg font-mono font-bold" dir="ltr">{opt.word}</span>

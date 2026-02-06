@@ -15,10 +15,10 @@ const FALLBACK_EMOJIS: Record<MascotState, string> = {
 };
 
 const SIZE_MAP = {
-  sm: { container: 'w-10 h-10', emoji: 'text-2xl' },
-  md: { container: 'w-16 h-16', emoji: 'text-4xl' },
-  lg: { container: 'w-24 h-24', emoji: 'text-6xl' },
-  xl: { container: 'w-36 h-36', emoji: 'text-8xl' },
+  sm: { container: 'w-12 h-12', emoji: 'text-2xl', bubble: true },
+  md: { container: 'w-20 h-20', emoji: 'text-4xl', bubble: true },
+  lg: { container: 'w-28 h-28', emoji: 'text-6xl', bubble: true },
+  xl: { container: 'w-40 h-40', emoji: 'text-8xl', bubble: true },
 };
 
 export function MascotImage({ state, size = 'md', className = '' }: MascotImageProps) {
@@ -28,8 +28,8 @@ export function MascotImage({ state, size = 'md', className = '' }: MascotImageP
 
   if (!hasImage) {
     return (
-      <div className={`mascot-emoji ${sizeClasses.container} ${sizeClasses.emoji} ${className}`}>
-        {FALLBACK_EMOJIS[state]}
+      <div className={`mascot-bubble ${sizeClasses.container} ${className}`}>
+        <span className={sizeClasses.emoji}>{FALLBACK_EMOJIS[state]}</span>
       </div>
     );
   }
