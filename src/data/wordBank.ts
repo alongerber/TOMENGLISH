@@ -9,11 +9,11 @@ export interface WordEntry {
   svgHint: string;
 }
 
-export const CATEGORIES: Record<WordCategory, { name: string; emoji: string; color: string }> = {
-  'magic-e': { name: 'Magic E', emoji: '✨', color: '#8B5CF6' },
-  'clothing': { name: 'בגדים וצבעים', emoji: '👕', color: '#EC4899' },
-  'numbers': { name: 'מחירים', emoji: '💰', color: '#F59E0B' },
-  'house': { name: 'בית ומילים כלליות', emoji: '🏠', color: '#10B981' },
+export const CATEGORIES: Record<WordCategory, { name: string; emoji: string; color: string; lightColor: string; cardClass: string }> = {
+  'magic-e': { name: 'Magic E', emoji: '✨', color: '#6C5CE7', lightColor: '#a29bfe', cardClass: 'card-magic-e' },
+  'clothing': { name: 'בגדים וצבעים', emoji: '👕', color: '#00b894', lightColor: '#55efc4', cardClass: 'card-clothing' },
+  'numbers': { name: 'מחירים', emoji: '💰', color: '#f39c12', lightColor: '#fdcb6e', cardClass: 'card-numbers' },
+  'house': { name: 'בית ומילים כלליות', emoji: '🏠', color: '#e17055', lightColor: '#fab1a0', cardClass: 'card-house' },
 };
 
 export const WORD_BANK: WordEntry[] = [

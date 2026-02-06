@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
-import { CoachButton } from '../components/ui/CoachButton';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
@@ -79,7 +79,7 @@ function generateRounds(): SentenceRound[] {
 
 export function SentenceBuilder() {
   const navigate = useNavigate();
-  const { recordAnswer } = useGameStore();
+  const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
 
@@ -88,12 +88,14 @@ export function SentenceBuilder() {
   const [placed, setPlaced] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<{ show: boolean; correct: boolean; message?: string }>({ show: false, correct: false });
   const [showComplete, setShowComplete] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
 
   const round = rounds[currentRound];
 
   useEffect(() => {
     start();
     setPlaced([]);
+    setAttemptCount(0);
   }, [currentRound, start]);
 
   const remainingParts = useMemo(() => {
@@ -130,9 +132,11 @@ export function SentenceBuilder() {
 
       if (isCorrect) {
         setFeedback({ show: true, correct: true, message: 'מושלם! 🎉' });
+        setAttemptCount(0);
         fireSuccess();
       } else {
         setFeedback({ show: true, correct: false, message: 'לא בדיוק... נסה שוב!' });
+        setAttemptCount(c => c + 1);
       }
 
       setTimeout(() => {
@@ -275,9 +279,14 @@ export function SentenceBuilder() {
           ))}
         </div>
 
-        <div className="flex justify-center">
-          <CoachButton taskType="sentence-builder" word={round.item.word} />
-        </div>
+        <AICoachStrip
+          module="sentenceBuilder"
+          currentWord={round.item.word}
+          isCorrect={feedback.show ? feedback.correct : null}
+          attemptCount={attemptCount}
+          streak={adaptive.combo}
+          gameComplete={showComplete}
+        />
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />

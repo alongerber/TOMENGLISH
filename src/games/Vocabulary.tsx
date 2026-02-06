@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
-import { CoachButton } from '../components/ui/CoachButton';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
@@ -206,7 +206,7 @@ function MemoryGame({ onBack }: { onBack: () => void }) {
 // --- Speed Match Game ---
 function SpeedMatchGame({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
-  const { recordAnswer } = useGameStore();
+  const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
 
@@ -217,6 +217,9 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
   const [feedback, setFeedback] = useState<{ show: boolean; correct: boolean }>({ show: false, correct: false });
   const [showComplete, setShowComplete] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [lastAnswer, setLastAnswer] = useState<string | undefined>(undefined);
+  const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
 
   const setupRound = useCallback(() => {
     const words = shuffle(WORD_BANK);
@@ -224,6 +227,9 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
     const distractors = words.slice(1, 4);
     setTargetWord(target);
     setOptions(shuffle([target, ...distractors]));
+    setAttemptCount(0);
+    setLastAnswer(undefined);
+    setLastCorrect(null);
     start();
   }, [start]);
 
@@ -236,6 +242,10 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
     const correct = word.word === targetWord.word;
     const time = getResponseTime();
     recordAnswer(targetWord.word, targetWord.category, correct, time);
+
+    setAttemptCount(c => c + 1);
+    setLastAnswer(word.word);
+    setLastCorrect(correct);
 
     if (correct) {
       fireSuccess();
@@ -260,6 +270,13 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
           <div className="text-5xl mb-4">⚡</div>
           <h2 className="text-2xl font-bold mb-2">סיום!</h2>
           <p className="text-gray-500 mb-2">{correctCount}/{TOTAL} תשובות נכונות</p>
+          <AICoachStrip
+            module="vocabulary"
+            currentWord={targetWord?.word}
+            attemptCount={attemptCount}
+            streak={adaptive.combo}
+            gameComplete={true}
+          />
           <div className="flex gap-3 justify-center mt-4">
             <button onClick={() => { setCurrentIdx(0); setCorrectCount(0); setShowComplete(false); }} className="btn-game btn-game-primary">עוד סיבוב 🔄</button>
             <button onClick={onBack} className="btn-game btn-game-secondary">בחר משחק</button>
@@ -296,9 +313,14 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
           ))}
         </div>
 
-        <div className="flex justify-center">
-          <CoachButton taskType="vocabulary-speed" word={targetWord.word} />
-        </div>
+        <AICoachStrip
+          module="vocabulary"
+          currentWord={targetWord.word}
+          childAnswer={lastAnswer}
+          isCorrect={lastCorrect}
+          attemptCount={attemptCount}
+          streak={adaptive.combo}
+        />
       </div>
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} />
     </div>
@@ -308,7 +330,7 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
 // --- Spotlight Game ---
 function SpotlightGame({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
-  const { recordAnswer } = useGameStore();
+  const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
 
@@ -319,6 +341,9 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
   const [blur, setBlur] = useState(20);
   const [feedback, setFeedback] = useState<{ show: boolean; correct: boolean }>({ show: false, correct: false });
   const [showComplete, setShowComplete] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [lastAnswer, setLastAnswer] = useState<string | undefined>(undefined);
+  const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
 
   const setupRound = useCallback(() => {
     const words = shuffle(WORD_BANK);
@@ -327,6 +352,9 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
     setTargetWord(target);
     setOptions(shuffle([target, ...distractors]));
     setBlur(20);
+    setAttemptCount(0);
+    setLastAnswer(undefined);
+    setLastCorrect(null);
     start();
   }, [start]);
 
@@ -349,6 +377,10 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
     const time = getResponseTime();
     recordAnswer(targetWord.word, targetWord.category, correct, time);
 
+    setAttemptCount(c => c + 1);
+    setLastAnswer(word.word);
+    setLastCorrect(correct);
+
     if (correct) fireSuccess();
     setFeedback({ show: true, correct });
 
@@ -368,6 +400,13 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="card-premium p-8 text-center max-w-md">
           <div className="text-5xl mb-4">🔦</div>
           <h2 className="text-2xl font-bold mb-2">כל הכבוד!</h2>
+          <AICoachStrip
+            module="vocabulary"
+            currentWord={targetWord?.word}
+            attemptCount={attemptCount}
+            streak={adaptive.combo}
+            gameComplete={true}
+          />
           <div className="flex gap-3 justify-center mt-4">
             <button onClick={() => { setCurrentIdx(0); setShowComplete(false); }} className="btn-game btn-game-primary">עוד סיבוב 🔄</button>
             <button onClick={onBack} className="btn-game btn-game-secondary">בחר משחק</button>
@@ -412,9 +451,14 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
           ))}
         </div>
 
-        <div className="flex justify-center">
-          <CoachButton taskType="vocabulary-spotlight" word={targetWord.word} />
-        </div>
+        <AICoachStrip
+          module="vocabulary"
+          currentWord={targetWord.word}
+          childAnswer={lastAnswer}
+          isCorrect={lastCorrect}
+          attemptCount={attemptCount}
+          streak={adaptive.combo}
+        />
       </div>
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} />
     </div>

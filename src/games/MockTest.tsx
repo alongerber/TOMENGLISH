@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
 import { StarRating } from '../components/ui/StarRating';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { formatTime } from '../hooks/useTimer';
@@ -129,6 +130,7 @@ export function MockTest() {
   const [answers, setAnswers] = useState<(boolean | null)[]>(() => new Array(questions.length).fill(null));
   const [feedback, setFeedback] = useState<{ show: boolean; correct: boolean }>({ show: false, correct: false });
   const [showResults, setShowResults] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const startTime = useRef(Date.now());
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -148,6 +150,11 @@ export function MockTest() {
     setAnswers(newAnswers);
 
     setFeedback({ show: true, correct });
+    if (correct) {
+      setAttemptCount(0);
+    } else {
+      setAttemptCount(c => c + 1);
+    }
 
     setTimeout(() => {
       setFeedback({ show: false, correct: false });
@@ -300,6 +307,14 @@ export function MockTest() {
             </motion.button>
           ))}
         </div>
+
+        <AICoachStrip
+          module="mockTest"
+          currentWord={q.relatedWord}
+          isCorrect={feedback.show ? feedback.correct : null}
+          attemptCount={attemptCount}
+          gameComplete={showResults}
+        />
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} />
