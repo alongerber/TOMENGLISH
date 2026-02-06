@@ -5,28 +5,42 @@ import { Welcome } from '../routes/Welcome';
 import { Home } from '../routes/Home';
 import { useGameStore } from '../store/gameStore';
 
-// Mock framer-motion to avoid animation issues in tests
+// Motion props to strip from rendered elements
+const MOTION_PROPS = ['initial', 'animate', 'exit', 'transition', 'whileHover', 'whileTap', 'drag', 'dragConstraints', 'onDragStart', 'onDragEnd', 'variants', 'layout', 'layoutId'];
+
+function createMotionComponent(tag: string) {
+  return ({ children, ...props }: Record<string, unknown>) => {
+    const filteredProps: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(props)) {
+      if (!MOTION_PROPS.includes(key)) filteredProps[key] = val;
+    }
+    const Tag = tag as keyof JSX.IntrinsicElements;
+    // @ts-expect-error dynamic tag
+    return <Tag {...filteredProps}>{children as React.ReactNode}</Tag>;
+  };
+}
+
+// Mock framer-motion to avoid animation issues in tests — uses Proxy so motion.X works for any tag
 vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: Record<string, unknown>) => {
-      const { initial: _i, animate: _a, exit: _e, transition: _t, whileHover: _wh, whileTap: _wt, drag: _d, dragConstraints: _dc, onDragStart: _ds, onDragEnd: _de, ...rest } = props;
-      return <div {...rest}>{children as React.ReactNode}</div>;
-    },
-    button: ({ children, ...props }: Record<string, unknown>) => {
-      const { initial: _i, animate: _a, exit: _e, transition: _t, whileHover: _wh, whileTap: _wt, ...rest } = props;
-      return <button {...rest}>{children as React.ReactNode}</button>;
-    },
-    span: ({ children, ...props }: Record<string, unknown>) => {
-      const { initial: _i, animate: _a, exit: _e, transition: _t, ...rest } = props;
-      return <span {...rest}>{children as React.ReactNode}</span>;
-    },
-  },
+  motion: new Proxy({}, {
+    get: (_target, prop: string) => createMotionComponent(prop),
+  }),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock canvas-confetti
 vi.mock('canvas-confetti', () => ({
   default: vi.fn(),
+}));
+
+// Mock MascotImage - used in Welcome and Home
+vi.mock('../components/ui/MascotImage', () => ({
+  MascotImage: ({ state }: { state: string }) => <div data-testid="mascot" data-state={state}>🦊</div>,
+}));
+
+// Mock AICoachStrip - used in Home and game modules
+vi.mock('../components/ui/AICoachStrip', () => ({
+  AICoachStrip: () => <div data-testid="ai-coach-strip">Coach</div>,
 }));
 
 describe('Welcome Screen', () => {
@@ -37,8 +51,8 @@ describe('Welcome Screen', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/בואו נלמד אנגלית/)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/הכנס את השם שלך/)).toBeInTheDocument();
+    expect(screen.getByText(/מסע הקסם באנגלית/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/איך קוראים לך/)).toBeInTheDocument();
   });
 
   it('should have a disabled start button when no name entered', () => {
@@ -99,5 +113,25 @@ describe('Home Screen', () => {
     );
 
     expect(screen.getByText(/שלבי בוס/)).toBeInTheDocument();
+  });
+
+  it('should show AI coach strip', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('ai-coach-strip')).toBeInTheDocument();
+  });
+
+  it('should show mascot', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByTestId('mascot').length).toBeGreaterThanOrEqual(1);
   });
 });

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
-import { CoachButton } from '../components/ui/CoachButton';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
@@ -53,7 +53,7 @@ function generateRounds(): PriceRound[] {
 
 export function PriceTag() {
   const navigate = useNavigate();
-  const { recordAnswer } = useGameStore();
+  const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
 
@@ -64,6 +64,7 @@ export function PriceTag() {
   const [selectedDollar, setSelectedDollar] = useState(false);
   const [feedback, setFeedback] = useState<{ show: boolean; correct: boolean; message?: string }>({ show: false, correct: false });
   const [showComplete, setShowComplete] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
 
   const round = rounds[currentRound];
 
@@ -83,6 +84,7 @@ export function PriceTag() {
     setSelectedItem(null);
     setSelectedNumber(null);
     setSelectedDollar(false);
+    setAttemptCount(0);
   }, [currentRound, start]);
 
   const checkAnswer = useCallback(() => {
@@ -95,8 +97,10 @@ export function PriceTag() {
     if (isCorrect) {
       setFeedback({ show: true, correct: true, message: 'מחיר נכון! 💰' });
       fireSuccess();
+      setAttemptCount(0);
     } else {
       setFeedback({ show: true, correct: false, message: 'לא מדויק... 🤔' });
+      setAttemptCount(prev => prev + 1);
     }
 
     setTimeout(() => {
@@ -255,9 +259,14 @@ export function PriceTag() {
           </motion.div>
         )}
 
-        <div className="flex justify-center">
-          <CoachButton taskType="price-tag" word={round.item.word} />
-        </div>
+        <AICoachStrip
+          module="priceTag"
+          currentWord={round.item.word}
+          isCorrect={feedback.show ? feedback.correct : null}
+          attemptCount={attemptCount}
+          streak={adaptive.combo}
+          gameComplete={showComplete}
+        />
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />

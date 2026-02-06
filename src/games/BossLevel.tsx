@@ -5,6 +5,7 @@ import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
 import { Hearts } from '../components/ui/Hearts';
 import { StarRating } from '../components/ui/StarRating';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { formatTime } from '../hooks/useTimer';
@@ -86,6 +87,7 @@ export function BossLevel() {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [attemptCount, setAttemptCount] = useState(0);
   const startTime = useRef(Date.now());
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -117,10 +119,12 @@ export function BossLevel() {
 
     if (correct) {
       setCorrectCount(c => c + 1);
+      setAttemptCount(0);
       setFeedback({ show: true, correct: true, message: '👍' });
     } else {
       const newHearts = hearts - 1;
       setHearts(newHearts);
+      setAttemptCount(c => c + 1);
       setFeedback({ show: true, correct: false, message: `❤️ ${newHearts}` });
 
       if (newHearts <= 0) {
@@ -258,6 +262,15 @@ export function BossLevel() {
             </motion.button>
           ))}
         </div>
+
+        <AICoachStrip
+          module="boss"
+          currentWord={q.target.word}
+          isCorrect={feedback.show ? feedback.correct : null}
+          attemptCount={attemptCount}
+          streak={correctCount}
+          gameComplete={gameOver && won}
+        />
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />

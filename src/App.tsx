@@ -19,7 +19,7 @@ function App() {
   const quietMode = useGameStore((s) => s.quietMode);
 
   return (
-    <div className={quietMode ? 'quiet-mode' : ''}>
+    <div className={`${quietMode ? 'quiet-mode' : ''} app-background`}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Welcome />} />

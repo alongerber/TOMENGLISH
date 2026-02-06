@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameHeader } from '../components/ui/GameHeader';
 import { FeedbackOverlay } from '../components/ui/FeedbackOverlay';
-import { CoachButton } from '../components/ui/CoachButton';
+import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
@@ -48,11 +48,13 @@ export function MagicELab() {
   const [sliderPos, setSliderPos] = useState(50);
   const [answered, setAnswered] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
 
   const round = rounds[currentRound];
 
   useEffect(() => {
     start();
+    setAttemptCount(0);
   }, [currentRound, start]);
 
   const handleCorrect = useCallback(() => {
@@ -61,6 +63,7 @@ export function MagicELab() {
     setFeedback({ show: true, correct: true, message: 'מעולה! 🎉' });
     fireSuccess();
     setAnswered(true);
+    setAttemptCount(0);
     setTimeout(() => {
       setFeedback({ show: false, correct: false });
       if (currentRound + 1 < rounds.length) {
@@ -78,6 +81,7 @@ export function MagicELab() {
     const time = getResponseTime();
     recordAnswer(round.word, 'magic-e', false, time);
     setFeedback({ show: true, correct: false, message: 'נסה שוב!' });
+    setAttemptCount(prev => prev + 1);
     setTimeout(() => {
       setFeedback({ show: false, correct: false });
     }, 800);
@@ -168,9 +172,14 @@ export function MagicELab() {
         </div>
 
         {/* Coach */}
-        <div className="flex justify-center">
-          <CoachButton taskType="magic-e" word={round.word} />
-        </div>
+        <AICoachStrip
+          module="magicE"
+          currentWord={round.word}
+          isCorrect={feedback.show ? feedback.correct : null}
+          attemptCount={attemptCount}
+          streak={adaptive.combo}
+          gameComplete={showComplete}
+        />
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />
