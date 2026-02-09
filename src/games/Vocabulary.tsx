@@ -40,7 +40,7 @@ export function Vocabulary() {
           onBack={() => navigate('/home')}
           showScore={false}
         />
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-xl mx-auto">
           <p className="text-center text-gray-500 mb-6">בחר מצב משחק:</p>
           <div className="grid gap-4">
             {GAME_MODES.map((mode, i) => (
@@ -167,7 +167,7 @@ function MemoryGame({ onBack }: { onBack: () => void }) {
   return (
     <div className="game-background min-h-screen p-4">
       <GameHeader title="זיכרון" emoji="🧠" color="#10B981" onBack={onBack} />
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         <p className="text-center text-gray-500 text-sm mb-4">👆 מצא זוגות: אימוג'י ↔ מילה</p>
         <div className="grid grid-cols-3 gap-3">
           {cards.map((card) => (
@@ -292,10 +292,10 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
   return (
     <div className="game-background min-h-screen p-4">
       <GameHeader title="מהירות" emoji="⚡" color="#10B981" onBack={onBack} progress={currentIdx / TOTAL} />
-      <div className="max-w-lg mx-auto">
-        <div className="card-3d p-8 text-center mb-6">
-          <div className="text-6xl mb-4">{targetWord.emoji}</div>
-          <p className="text-gray-500">{targetWord.hebrew}</p>
+      <div className="max-w-xl mx-auto">
+        <div className="card-game-giant p-8 text-center mb-6">
+          <div className="text-7xl mb-4">{targetWord.emoji}</div>
+          <p className="text-lg text-gray-500 font-bold">{targetWord.hebrew}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -422,15 +422,15 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
   return (
     <div className="game-background min-h-screen p-4">
       <GameHeader title="זרקור" emoji="🔦" color="#10B981" onBack={onBack} progress={currentIdx / TOTAL} />
-      <div className="max-w-lg mx-auto">
-        <div className="card-3d p-8 text-center mb-6">
+      <div className="max-w-xl mx-auto">
+        <div className="card-game-giant p-8 text-center mb-6">
           <div
             className="text-8xl mb-4 transition-all duration-200"
             style={{ filter: `blur(${blur}px)` }}
           >
             {targetWord.emoji}
           </div>
-          <p className="text-sm text-gray-400">
+          <p className="text-base text-gray-400 font-bold">
             {blur > 10 ? '🔦 התמונה מתבהרת...' : blur > 0 ? '🔦 כמעט רואים!' : '👀 ברור!'}
           </p>
         </div>

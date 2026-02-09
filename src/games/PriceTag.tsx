@@ -151,14 +151,14 @@ export function PriceTag() {
         progress={currentRound / rounds.length}
       />
 
-      <div className="max-w-lg mx-auto">
-        {/* Price display */}
-        <div className="card-3d p-6 mb-6 text-center">
-          <div className="text-lg text-gray-500 mb-2">🏷️ המחיר:</div>
-          <div className="text-4xl font-bold text-amber-600 mb-1" dir="ltr">
+      <div className="max-w-xl mx-auto">
+        {/* Price display — GIANT */}
+        <div className="card-game-giant p-8 mb-6 text-center">
+          <div className="text-lg text-gray-500 mb-3">🏷️ המחיר:</div>
+          <div className="text-6xl font-black text-amber-600 mb-3" dir="ltr">
             ${round.numericValue}
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400 font-bold">
             👆 בחר: פריט + מספר + dollar
           </p>
         </div>

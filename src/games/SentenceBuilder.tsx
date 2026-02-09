@@ -202,7 +202,7 @@ export function SentenceBuilder() {
         progress={currentRound / rounds.length}
       />
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         {/* Target display */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -225,8 +225,8 @@ export function SentenceBuilder() {
           </p>
         </div>
 
-        {/* Sentence building area */}
-        <div className="card-3d p-6 mb-6">
+        {/* Sentence building area — larger card */}
+        <div className="card-3d p-8 mb-6">
           <div className="min-h-[60px] flex flex-wrap gap-2 justify-center items-center mb-4" dir="ltr">
             <AnimatePresence>
               {placed.map((part, i) => (

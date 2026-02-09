@@ -14,7 +14,7 @@ export function GameHeader({ title, emoji, color = '#6C5CE7', onBack, progress, 
 
   return (
     <div className="glass-header px-4 py-3 mb-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <button
             onClick={onBack}

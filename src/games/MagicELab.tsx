@@ -94,7 +94,7 @@ export function MagicELab() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="card-3d p-8 text-center max-w-md"
+          className="card-3d p-8 text-center max-w-md w-full"
         >
           <motion.div
             className="text-6xl mb-4"
@@ -118,9 +118,8 @@ export function MagicELab() {
 
   if (!round) return null;
 
-  // Remove trailing 'e' for display in drag mode
   const baseWord = round.word === 'wake up' ? 'wak' : round.word.slice(0, -1);
-  const hasE = round.word !== 'wake up'; // wake up is special
+  const hasE = round.word !== 'wake up';
 
   return (
     <div className="game-background min-h-screen p-4">
@@ -132,22 +131,21 @@ export function MagicELab() {
         progress={currentRound / rounds.length}
       />
 
-      <div className="max-w-lg mx-auto">
-        {/* Instruction */}
-        <div className="text-center mb-6">
-          <span className="text-3xl mb-2 block">{round.emoji}</span>
-          <p className="text-gray-500 text-sm">
-            {round.mode === 'drag-e' ? '👆 גרור את ה-e למקום הנכון' : '🎯 הזז את הסרגל לצליל הנכון'}
-          </p>
+      <div className="max-w-xl mx-auto">
+        {/* Emoji + Hebrew */}
+        <div className="text-center mb-4">
+          <span className="text-4xl mb-1 block">{round.emoji}</span>
+          <span className="text-lg text-gray-600 font-bold">{round.hebrew}</span>
         </div>
 
+        {/* GIANT GAME CARD */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`${currentRound}-${round.mode}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="card-3d p-8 text-center mb-6"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="card-game-giant p-8 mb-6"
           >
             {round.mode === 'drag-e' ? (
               <DragEGame
@@ -175,10 +173,10 @@ export function MagicELab() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Hebrew translation */}
-        <div className="text-center mb-4">
-          <span className="text-lg text-gray-600">{round.hebrew}</span>
-        </div>
+        {/* Instruction hint */}
+        <p className="text-center text-gray-400 text-sm mb-4">
+          {round.mode === 'drag-e' ? '👆 גרור את ה-e או לחץ עליו' : '🎯 הזז את הסרגל לאזור הסגול'}
+        </p>
 
         {/* Coach */}
         <AICoachStrip
@@ -196,7 +194,7 @@ export function MagicELab() {
   );
 }
 
-// Drag E sub-game
+// Drag E sub-game — HUGE word + HUGE e button
 function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
   baseWord: string;
   fullWord: string;
@@ -207,10 +205,9 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
   const [dragging, setDragging] = useState(false);
 
   if (!hasE) {
-    // wake up special: show as-is and tap to reveal
     return (
-      <div>
-        <div className="text-5xl font-mono font-bold tracking-widest mb-6" dir="ltr">
+      <div className="text-center">
+        <div className="text-7xl font-mono font-black tracking-widest mb-8" dir="ltr">
           {eDropped ? fullWord : 'wak_ up'}
         </div>
         {!eDropped && (
@@ -218,7 +215,7 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onDrop}
-            className="btn-3d btn-3d-purple mx-auto !w-16 !h-16 !p-0 !rounded-2xl !text-3xl cursor-grab active:cursor-grabbing"
+            className="btn-3d btn-3d-purple !w-24 !h-24 !p-0 !rounded-3xl !text-5xl animate-pulse-purple cursor-grab active:cursor-grabbing mx-auto"
           >
             e
           </motion.button>
@@ -228,8 +225,9 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
   }
 
   return (
-    <div>
-      <div className="text-5xl font-mono font-bold tracking-widest mb-6 flex items-center justify-center gap-1" dir="ltr">
+    <div className="text-center">
+      {/* Word display — HUGE */}
+      <div className="text-7xl font-mono font-black tracking-widest mb-8 flex items-center justify-center gap-1" dir="ltr">
         {baseWord.split('').map((char, i) => (
           <motion.span key={i} className="inline-block">{char}</motion.span>
         ))}
@@ -242,10 +240,11 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
             e
           </motion.span>
         ) : (
-          <span className="inline-block w-10 h-14 border-b-4 border-dashed border-purple-300 mx-1" />
+          <span className="inline-block w-14 h-20 border-b-4 border-dashed border-purple-300 mx-1" />
         )}
       </div>
 
+      {/* E button — HUGE with pulse glow */}
       {!eDropped && (
         <motion.div
           drag
@@ -256,16 +255,12 @@ function DragEGame({ baseWord, fullWord, hasE, eDropped, onDrop }: {
             onDrop();
           }}
           whileHover={{ scale: 1.1 }}
-          className={`btn-3d btn-3d-purple mx-auto !w-16 !h-16 !p-0 !rounded-2xl !text-3xl ${
+          className={`btn-3d btn-3d-purple !w-24 !h-24 !p-0 !rounded-3xl !text-5xl animate-pulse-purple mx-auto ${
             dragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
           e
         </motion.div>
-      )}
-
-      {!eDropped && (
-        <p className="text-xs text-gray-400 mt-3">💡 גרור או לחץ על ה-e</p>
       )}
     </div>
   );
@@ -279,30 +274,28 @@ function SoundSliderGame({ word, sliderPos, setSliderPos, answered, onSubmit }: 
   answered: boolean;
   onSubmit: (correct: boolean) => void;
 }) {
-  // The "correct zone" is 60-80 on the slider (representing the Magic E sound)
   const correctZone = { min: 55, max: 85 };
   const isInZone = sliderPos >= correctZone.min && sliderPos <= correctZone.max;
 
   return (
-    <div>
-      <div className="text-4xl font-mono font-bold tracking-widest mb-6" dir="ltr">
+    <div className="w-full px-4">
+      {/* Word — HUGE */}
+      <div className="text-6xl font-mono font-black tracking-widest mb-8 text-center" dir="ltr">
         {word}
       </div>
 
-      <div className="mb-4">
-        <p className="text-sm text-gray-500 mb-3">🎯 הזז את הסרגל לאזור הצליל של Magic E</p>
-
-        <div className="relative h-8 rounded-full bg-gray-100 mx-4 mb-2">
-          {/* Correct zone indicator */}
+      <div className="mb-6">
+        <div className="relative h-10 rounded-full bg-gray-100 mx-2 mb-3">
+          {/* Correct zone */}
           <div
-            className="absolute h-full rounded-full bg-purple-100 border border-purple-200"
+            className="absolute h-full rounded-full bg-purple-100 border-2 border-purple-300"
             style={{
               left: `${correctZone.min}%`,
               width: `${correctZone.max - correctZone.min}%`,
             }}
           />
 
-          {/* Slider */}
+          {/* Slider input */}
           <input
             type="range"
             min={0}
@@ -314,30 +307,32 @@ function SoundSliderGame({ word, sliderPos, setSliderPos, answered, onSubmit }: 
             dir="ltr"
           />
 
-          {/* Visual indicator */}
+          {/* Visual thumb */}
           <motion.div
-            className={`absolute top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-3 shadow-md ${
+            className={`absolute top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-3 shadow-lg ${
               isInZone ? 'bg-purple-500 border-purple-600' : 'bg-white border-gray-300'
             }`}
-            style={{ left: `calc(${sliderPos}% - 16px)` }}
-            animate={{ scale: isInZone ? 1.1 : 1 }}
+            style={{ left: `calc(${sliderPos}% - 20px)` }}
+            animate={{ scale: isInZone ? 1.15 : 1 }}
           />
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 px-4" dir="ltr">
+        <div className="flex justify-between text-sm text-gray-400 px-4" dir="ltr">
           <span>🔈</span>
-          <span className="text-purple-400 font-bold">✨ Magic E ✨</span>
+          <span className="text-purple-500 font-bold">✨ Magic E ✨</span>
           <span>🔊</span>
         </div>
       </div>
 
       {!answered && (
-        <button
-          onClick={() => onSubmit(isInZone)}
-          className="btn-game btn-game-primary mx-auto block"
-        >
-          ✓ בדיקה
-        </button>
+        <div className="text-center">
+          <button
+            onClick={() => onSubmit(isInZone)}
+            className="btn-3d btn-3d-success text-xl"
+          >
+            ✓ בדיקה
+          </button>
+        </div>
       )}
     </div>
   );

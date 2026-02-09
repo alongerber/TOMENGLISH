@@ -272,7 +272,7 @@ export function MockTest() {
         showScore={false}
       />
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         {/* Section indicator */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -285,11 +285,11 @@ export function MockTest() {
           </div>
         </div>
 
-        {/* Question card */}
-        <div className="card-3d p-6 mb-6 text-center">
-          <div className="text-4xl mb-3">{q.promptEmoji}</div>
-          <p className="text-xl font-bold" dir="ltr">{q.prompt}</p>
-          <p className="text-sm text-gray-400 mt-2">שאלה {currentQ + 1} מתוך {questions.length}</p>
+        {/* Question card — larger */}
+        <div className="card-game-giant p-8 mb-6 text-center">
+          <div className="text-5xl mb-4">{q.promptEmoji}</div>
+          <p className="text-2xl font-bold" dir="ltr">{q.prompt}</p>
+          <p className="text-sm text-gray-400 mt-3">שאלה {currentQ + 1} מתוך {questions.length}</p>
         </div>
 
         {/* Options */}

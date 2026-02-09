@@ -14,42 +14,12 @@ const MODULES: { id: string; category: WordCategory; title: string; subtitle: st
   { id: 'vocabulary', category: 'house', title: 'אוצר מילים', subtitle: 'חזותי', emoji: '🎯', icon: '🔍', path: '/vocabulary' },
 ];
 
-// Sample words to show on each card
-const CARD_EXAMPLES: Record<string, string> = {
-  'magic-e': 'bake 🪄 game',
-  'sentences': 'The shirt is...',
-  'prices': '$50 dollar',
-  'vocabulary': '🥾 boots 🤠',
+const MODULE_COLORS: Record<string, { bg: string; border: string; shadow: string }> = {
+  'magic-e': { bg: 'linear-gradient(145deg, #7c6cf0 0%, #9b8fff 50%, #c4b5fd 100%)', border: '#6C5CE7', shadow: 'rgba(108, 92, 231, 0.35)' },
+  'clothing': { bg: 'linear-gradient(145deg, #00c9a7 0%, #38d9a9 50%, #69f0ae 100%)', border: '#00b894', shadow: 'rgba(0, 184, 148, 0.35)' },
+  'numbers': { bg: 'linear-gradient(145deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%)', border: '#d97706', shadow: 'rgba(245, 158, 11, 0.35)' },
+  'house': { bg: 'linear-gradient(145deg, #e17055 0%, #f08a6e 50%, #fab1a0 100%)', border: '#d35400', shadow: 'rgba(225, 112, 85, 0.35)' },
 };
-
-// Confetti pieces
-function Confetti() {
-  const pieces = ['🎊', '🎉', '✨', '⭐', '🌟', '💫'];
-  const positions = [
-    { top: '15%', left: '5%', delay: 0, size: '1.2rem' },
-    { top: '25%', right: '8%', delay: 0.3, size: '0.9rem' },
-    { top: '70%', left: '3%', delay: 0.6, size: '1rem' },
-    { top: '75%', right: '5%', delay: 0.9, size: '1.1rem' },
-    { top: '60%', left: '15%', delay: 1.2, size: '0.8rem' },
-    { top: '65%', right: '12%', delay: 0.4, size: '1rem' },
-  ];
-
-  return (
-    <>
-      {positions.map((pos, i) => (
-        <motion.span
-          key={i}
-          className="absolute pointer-events-none select-none z-0"
-          style={{ ...pos, fontSize: pos.size }}
-          animate={{ y: [0, -8, 0], rotate: [0, 10, -10, 0], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 3, delay: pos.delay, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          {pieces[i % pieces.length]}
-        </motion.span>
-      ))}
-    </>
-  );
-}
 
 export function Home() {
   const navigate = useNavigate();
@@ -58,24 +28,22 @@ export function Home() {
   const mockTestAvailable = allBossesCompleted(adaptive);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: '#2B7DE9' }}>
-      <Confetti />
+    <div className="game-background min-h-screen">
+      <div className="max-w-xl mx-auto px-4 py-4">
 
-      {/* ── TOP SECTION: Blue area with mascot + title ── */}
-      <div className="relative z-10 pt-4 px-4">
         {/* Settings row */}
-        <div className="flex justify-between items-center max-w-4xl mx-auto mb-2">
+        <div className="flex justify-between items-center mb-3">
           <div className="flex gap-2">
             <button
               onClick={toggleSound}
-              className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-lg hover:bg-white/30 transition-all"
+              className="w-10 h-10 rounded-full bg-white/70 shadow-sm flex items-center justify-center text-lg hover:bg-white transition-all"
               aria-label={soundEnabled ? 'כבה סאונד' : 'הפעל סאונד'}
             >
               {soundEnabled ? '🔊' : '🔇'}
             </button>
             <button
               onClick={toggleQuietMode}
-              className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-lg hover:bg-white/30 transition-all"
+              className="w-10 h-10 rounded-full bg-white/70 shadow-sm flex items-center justify-center text-lg hover:bg-white transition-all"
               aria-label={quietMode ? 'הפעל אנימציות' : 'מצב שקט'}
             >
               {quietMode ? '🌙' : '✨'}
@@ -85,243 +53,199 @@ export function Home() {
             onClick={() => {
               if (confirm('בטוח שרוצה לאפס את כל ההתקדמות?')) resetProgress();
             }}
-            className="text-xs text-white/40 hover:text-white/70 transition-colors"
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
             איפוס
           </button>
         </div>
 
-        {/* Mascot + Title row */}
-        <div className="max-w-4xl mx-auto flex items-center gap-4 mb-4">
-          {/* Large mascot — breaks out of grid */}
+        {/* Hero: Mascot + greeting */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="card-3d p-5 mb-5 flex items-center gap-4"
+          style={{ background: 'linear-gradient(135deg, #2B7DE9 0%, #5b9ef5 100%)', borderColor: '#1d5fbd', borderBottomColor: '#174aa3' }}
+        >
           <motion.div
-            initial={{ scale: 0, rotate: -10 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.1 }}
             className="shrink-0"
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <div className="animate-float-rotate">
-              <MascotImage state="idle" size="xl" />
-            </div>
+            <MascotImage state="idle" size="lg" />
           </motion.div>
-
-          {/* Title area */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex-1"
-          >
-            <h1 className="title-magical text-white leading-tight mb-2">
-              מסע הקסם<br />באנגלית
-            </h1>
-            <p className="text-white/70 text-base">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black text-white leading-tight mb-1">
               היי {playerName}! 👋
+            </h1>
+            <p className="text-white/70 text-sm font-bold">
+              מסע הקסם באנגלית
             </p>
-          </motion.div>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-white/90 text-sm font-bold">⭐ {adaptive.totalScore}</span>
+              {adaptive.combo > 1 && (
+                <span className="text-amber-300 text-sm font-bold animate-pop-in">🔥 x{adaptive.combo}</span>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Progress stars */}
+        <div className="flex justify-center gap-1 mb-4">
+          {[1, 2, 3, 4, 5].map(i => (
+            <span key={i} className={`text-2xl transition-all ${adaptive.totalScore >= i * 100 ? 'drop-shadow-md' : 'grayscale opacity-30'}`}>
+              ⭐
+            </span>
+          ))}
         </div>
-      </div>
 
-      {/* ── WHITE WAVE SECTION ── */}
-      <div className="relative z-10">
-        {/* Curved wave divider */}
-        <svg viewBox="0 0 1440 120" className="w-full block -mb-1" preserveAspectRatio="none">
-          <path
-            d="M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z"
-            fill="white"
-          />
-        </svg>
+        {/* 2x2 MODULE GRID */}
+        <div className="grid grid-cols-2 gap-4 mb-5">
+          {MODULES.map((mod, idx) => {
+            const cat = adaptive.categoryProgress[mod.category];
+            const colors = MODULE_COLORS[mod.category];
+            const progress = cat.totalAttempts > 0 ? cat.totalCorrect / Math.max(cat.totalAttempts, 1) : 0;
 
-        {/* White content area */}
-        <div className="bg-white px-4 pb-8 -mt-px">
-          <div className="max-w-4xl mx-auto">
+            return (
+              <motion.button
+                key={mod.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + idx * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
+                whileHover={{ scale: 1.04, y: -4 }}
+                whileTap={{ scale: 0.96, y: 2 }}
+                onClick={() => navigate(mod.path)}
+                className="module-card"
+                style={{
+                  background: colors.bg,
+                  borderColor: colors.border,
+                  borderBottomColor: colors.border,
+                  boxShadow: `0 6px 0 ${colors.border}88, 0 10px 24px ${colors.shadow}`,
+                }}
+              >
+                {/* Icon */}
+                <div className="text-4xl mb-2 drop-shadow-md">
+                  {mod.icon}
+                </div>
 
-            {/* ── MODULE CARDS — Horizontal row ── */}
-            <div className="flex gap-4 overflow-x-auto pb-4 -mt-4 px-1 snap-x snap-mandatory scrollbar-hide">
-              {MODULES.map((mod, idx) => {
-                const cat = adaptive.categoryProgress[mod.category];
-                const catData = CATEGORIES[mod.category];
-                const progress = cat.totalAttempts > 0 ? cat.totalCorrect / Math.max(cat.totalAttempts, 1) : 0;
+                {/* Title */}
+                <h3 className="font-black text-base text-white drop-shadow-sm">{mod.title}</h3>
+                <h3 className="font-black text-base text-white drop-shadow-sm mb-2">{mod.subtitle}</h3>
 
-                return (
-                  <motion.button
-                    key={mod.id}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + idx * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
-                    whileHover={{ scale: 1.05, y: -4 }}
-                    whileTap={{ scale: 0.95, y: 2 }}
-                    onClick={() => navigate(mod.path)}
-                    className="card-3d snap-center shrink-0 w-[160px] p-4 text-center"
+                {/* Progress mini bar */}
+                {cat.totalAttempts > 0 && (
+                  <div className="h-2 rounded-full bg-white/30 overflow-hidden mx-2">
+                    <div
+                      className="h-full rounded-full bg-white/80 transition-all duration-500"
+                      style={{ width: `${progress * 100}%` }}
+                    />
+                  </div>
+                )}
+
+                {/* Star badges */}
+                {cat.bossCompleted && (
+                  <div className="text-sm mt-2">{'⭐'.repeat(cat.stars)}</div>
+                )}
+
+                {/* Boss badge */}
+                {cat.bossUnlocked && !cat.bossCompleted && (
+                  <span className="absolute -top-2 -left-2 text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full shadow-lg animate-bounce-subtle">
+                    👾 BOSS!
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* BOSS LEVELS */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mb-4"
+        >
+          <h2 className="text-base font-extrabold mb-3 text-gray-600">
+            👾 שלבי בוס
+          </h2>
+          <div className="grid grid-cols-4 gap-2">
+            {MODULES.map((mod, idx) => {
+              const cat = adaptive.categoryProgress[mod.category];
+              const unlocked = cat.bossUnlocked;
+              const catData = CATEGORIES[mod.category];
+
+              return (
+                <motion.button
+                  key={`boss-${mod.id}`}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.8 + idx * 0.08 }}
+                  whileHover={unlocked ? { scale: 1.08 } : {}}
+                  whileTap={unlocked ? { scale: 0.92 } : {}}
+                  onClick={() => unlocked && navigate(`/boss/${mod.category}`)}
+                  disabled={!unlocked}
+                  className={`card-3d p-3 text-center ${
+                    !unlocked ? 'opacity-40 cursor-not-allowed' : ''
+                  } ${cat.bossCompleted ? 'ring-3 ring-amber-400' : ''}`}
+                >
+                  <div
+                    className="w-10 h-10 mx-auto mb-1 rounded-xl flex items-center justify-center text-xl"
                     style={{
-                      background: `linear-gradient(145deg, ${catData.color}22, ${catData.color}44)`,
-                      borderColor: catData.color,
-                      borderBottomColor: catData.color,
+                      background: unlocked
+                        ? `linear-gradient(135deg, ${catData.color}, ${catData.lightColor})`
+                        : '#e0e0e0',
+                      boxShadow: unlocked ? `0 3px 0 ${catData.color}88` : 'none',
                     }}
                   >
-                    {/* 3D Icon */}
-                    <div
-                      className="w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl"
-                      style={{
-                        background: `linear-gradient(135deg, ${catData.color}, ${catData.lightColor})`,
-                        boxShadow: `0 4px 0 ${catData.color}88, 0 6px 12px ${catData.color}33`,
-                      }}
-                    >
-                      <span className="drop-shadow-md filter">{mod.icon}</span>
+                    {cat.bossCompleted ? '🏆' : unlocked ? '👾' : '🔒'}
+                  </div>
+                  <div className="text-[10px] font-bold text-gray-600 leading-tight">{mod.title} {mod.subtitle}</div>
+                  {cat.bossCompleted && (
+                    <div className="text-[10px] mt-0.5">{'⭐'.repeat(cat.stars)}</div>
+                  )}
+                  {!unlocked && (
+                    <div className="text-[9px] text-gray-400 mt-0.5">
+                      עוד {Math.max(0, 10 - cat.totalCorrect)}
                     </div>
-
-                    {/* Title */}
-                    <h3 className="font-extrabold text-sm mb-0.5 text-gray-800">{mod.title}</h3>
-                    <h3 className="font-extrabold text-sm mb-2 text-gray-800">{mod.subtitle}</h3>
-
-                    {/* Example chip */}
-                    <div className="bg-white/80 rounded-full px-3 py-1 text-xs font-bold text-gray-600 inline-block" dir="ltr">
-                      {CARD_EXAMPLES[mod.category]}
-                    </div>
-
-                    {/* Star progress */}
-                    {cat.bossCompleted && (
-                      <div className="text-sm mt-2">{'⭐'.repeat(cat.stars)}</div>
-                    )}
-
-                    {/* Progress mini bar */}
-                    {cat.totalAttempts > 0 && (
-                      <div className="mt-2 h-2 rounded-full bg-white/50 overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ width: `${progress * 100}%`, background: catData.color }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Boss badge */}
-                    {cat.bossUnlocked && !cat.bossCompleted && (
-                      <span className="absolute -top-2 -left-2 text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full shadow-lg animate-bounce-subtle">
-                        👾 BOSS!
-                      </span>
-                    )}
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            {/* ── SCORE + PROGRESS ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="text-center my-6"
-            >
-              <p className="text-gray-500 font-bold mb-3">
-                ⭐ נקודות: {adaptive.totalScore}
-              </p>
-              <div className="max-w-xs mx-auto">
-                <div className="progress-bar">
-                  <div
-                    className="progress-bar-fill"
-                    style={{ width: `${Math.min((adaptive.totalScore / 500) * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center gap-1 mt-2">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <span key={i} className={`text-2xl ${adaptive.totalScore >= i * 100 ? '' : 'grayscale opacity-30'}`}>
-                    ⭐
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* ── BOSS LEVELS ROW ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="mb-6"
-            >
-              <h2 className="text-lg font-extrabold mb-3 text-gray-700">
-                👾 שלבי בוס
-              </h2>
-              <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
-                {MODULES.map((mod, idx) => {
-                  const cat = adaptive.categoryProgress[mod.category];
-                  const unlocked = cat.bossUnlocked;
-                  const catData = CATEGORIES[mod.category];
-
-                  return (
-                    <motion.button
-                      key={`boss-${mod.id}`}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.0 + idx * 0.08 }}
-                      whileHover={unlocked ? { scale: 1.08 } : {}}
-                      whileTap={unlocked ? { scale: 0.92 } : {}}
-                      onClick={() => unlocked && navigate(`/boss/${mod.category}`)}
-                      disabled={!unlocked}
-                      className={`card-3d snap-center shrink-0 w-[120px] p-3 text-center ${
-                        !unlocked ? 'opacity-40 cursor-not-allowed' : ''
-                      } ${cat.bossCompleted ? 'ring-3 ring-amber-400' : ''}`}
-                    >
-                      <div
-                        className="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center text-2xl"
-                        style={{
-                          background: unlocked
-                            ? `linear-gradient(135deg, ${catData.color}, ${catData.lightColor})`
-                            : '#e0e0e0',
-                          boxShadow: unlocked ? `0 3px 0 ${catData.color}88` : 'none',
-                        }}
-                      >
-                        {cat.bossCompleted ? '🏆' : unlocked ? '👾' : '🔒'}
-                      </div>
-                      <div className="text-xs font-bold text-gray-700">{mod.title} {mod.subtitle}</div>
-                      {cat.bossCompleted && (
-                        <div className="text-xs mt-1">{'⭐'.repeat(cat.stars)}</div>
-                      )}
-                      {!unlocked && (
-                        <div className="text-[10px] text-gray-400 mt-1">
-                          עוד {Math.max(0, 10 - cat.totalCorrect)}
-                        </div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </motion.div>
-
-            {/* ── MOCK TEST ── */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 }}
-              whileHover={mockTestAvailable ? { scale: 1.02 } : {}}
-              whileTap={mockTestAvailable ? { scale: 0.98 } : {}}
-              onClick={() => mockTestAvailable && navigate('/mock-test')}
-              disabled={!mockTestAvailable}
-              className={`card-3d w-full p-5 text-center mb-6 ${
-                mockTestAvailable ? '' : 'opacity-40 cursor-not-allowed'
-              }`}
-              style={mockTestAvailable ? {
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                borderColor: '#5a67d8',
-                borderBottomColor: '#4c51bf',
-                color: 'white',
-              } : {}}
-            >
-              <div className="text-3xl mb-1">📝</div>
-              <div className="text-lg font-extrabold">מבחן דמה</div>
-              <div className={`text-sm ${mockTestAvailable ? 'text-white/70' : 'text-gray-400'}`}>
-                {mockTestAvailable ? 'מוכנים למבחן!' : 'צריך להשלים את כל שלבי הבוס'}
-              </div>
-              {adaptive.mockTestCompleted && (
-                <div className="mt-1 text-base font-bold">ציון: {adaptive.mockTestScore}%</div>
-              )}
-            </motion.button>
-
-            {/* ── AI COACH — Golden hint button ── */}
-            <AICoachStrip module="vocabulary" />
-
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
+
+        {/* MOCK TEST */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          whileHover={mockTestAvailable ? { scale: 1.02 } : {}}
+          whileTap={mockTestAvailable ? { scale: 0.98 } : {}}
+          onClick={() => mockTestAvailable && navigate('/mock-test')}
+          disabled={!mockTestAvailable}
+          className={`card-3d w-full p-4 text-center mb-4 ${
+            mockTestAvailable ? '' : 'opacity-40 cursor-not-allowed'
+          }`}
+          style={mockTestAvailable ? {
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            borderColor: '#5a67d8',
+            borderBottomColor: '#4c51bf',
+            color: 'white',
+          } : {}}
+        >
+          <div className="text-2xl mb-1">📝</div>
+          <div className="text-lg font-extrabold">מבחן דמה</div>
+          <div className={`text-sm ${mockTestAvailable ? 'text-white/70' : 'text-gray-400'}`}>
+            {mockTestAvailable ? 'מוכנים למבחן!' : 'צריך להשלים את כל שלבי הבוס'}
+          </div>
+          {adaptive.mockTestCompleted && (
+            <div className="mt-1 text-base font-bold">ציון: {adaptive.mockTestScore}%</div>
+          )}
+        </motion.button>
+
+        {/* AI Coach */}
+        <AICoachStrip module="vocabulary" />
+
       </div>
     </div>
   );

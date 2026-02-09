@@ -198,7 +198,7 @@ export function BossLevel() {
         progress={currentQ / questions.length}
       />
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         {/* Stats bar */}
         <div className="flex items-center justify-between mb-4">
           <Hearts total={MAX_HEARTS} remaining={hearts} />
@@ -218,9 +218,9 @@ export function BossLevel() {
           />
         </div>
 
-        {/* Question */}
-        <div className="card-3d p-6 mb-6 text-center">
-          <div className="text-4xl mb-3">{q.promptEmoji}</div>
+        {/* Question — giant card */}
+        <div className="card-game-giant p-8 mb-6 text-center">
+          <div className="text-5xl mb-4">{q.promptEmoji}</div>
           {q.type === 'pick-word' && (
             <div>
               <p className="text-lg font-bold mb-1">{q.prompt}</p>
