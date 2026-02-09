@@ -8,6 +8,8 @@ import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { formatTime } from '../hooks/useTimer';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 import { getMagicEWords, getClothingWords, getNumberWords, getHouseWords, WORD_BANK } from '../data/wordBank';
 import type { WordEntry } from '../data/wordBank';
 
@@ -124,6 +126,8 @@ export function MockTest() {
   const navigate = useNavigate();
   const { completeMockTest } = useGameStore();
   const { fireBoss } = useConfetti();
+  const { playCorrect, playWrong, playBossWin } = useSound();
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('mock-test'));
 
   const [questions] = useState<TestQuestion[]>(generateTestQuestions);
   const [currentQ, setCurrentQ] = useState(0);
@@ -151,8 +155,10 @@ export function MockTest() {
 
     setFeedback({ show: true, correct });
     if (correct) {
+      playCorrect();
       setAttemptCount(0);
     } else {
+      playWrong();
       setAttemptCount(c => c + 1);
     }
 
@@ -166,7 +172,7 @@ export function MockTest() {
           (newAnswers.filter(a => a === true).length / questions.length) * 100
         );
         completeMockTest(score);
-        if (score >= 70) fireBoss();
+        if (score >= 70) { fireBoss(); playBossWin(); }
         setShowResults(true);
       }
     }, 800);
@@ -318,6 +324,13 @@ export function MockTest() {
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} />
+      <TutorialOverlay
+        show={showTutorial}
+        title="מבחן דמה"
+        emoji="📝"
+        steps={['20 שאלות מכל הנושאים 📚', 'בחר את התשובה הנכונה ✓', 'צריך 70% כדי לעבור — בהצלחה! 🍀']}
+        onStart={() => { markTutorialSeen('mock-test'); setShowTutorial(false); }}
+      />
     </div>
   );
 }

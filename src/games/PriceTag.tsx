@@ -7,6 +7,8 @@ import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 import { getClothingWords, getNumberWords } from '../data/wordBank';
 import type { WordEntry } from '../data/wordBank';
 
@@ -56,6 +58,8 @@ export function PriceTag() {
   const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
+  const { playCorrect, playWrong, playCombo } = useSound();
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('prices'));
 
   const [rounds] = useState<PriceRound[]>(generateRounds);
   const [currentRound, setCurrentRound] = useState(0);
@@ -97,9 +101,13 @@ export function PriceTag() {
     if (isCorrect) {
       setFeedback({ show: true, correct: true, message: 'מחיר נכון! 💰' });
       fireSuccess();
+      playCorrect();
+      const currentCombo = useGameStore.getState().adaptive.combo;
+      if (currentCombo >= 3) playCombo(currentCombo);
       setAttemptCount(0);
     } else {
       setFeedback({ show: true, correct: false, message: 'לא מדויק... 🤔' });
+      playWrong();
       setAttemptCount(prev => prev + 1);
     }
 
@@ -270,6 +278,13 @@ export function PriceTag() {
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />
+      <TutorialOverlay
+        show={showTutorial}
+        title="תג מחיר"
+        emoji="💰"
+        steps={['בחר את הפריט הנכון 🛍️', 'בחר את המספר שמתאים למחיר 🔢', 'אל תשכח ללחוץ על dollar! 💵']}
+        onStart={() => { markTutorialSeen('prices'); setShowTutorial(false); }}
+      />
     </div>
   );
 }

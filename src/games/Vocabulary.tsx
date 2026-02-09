@@ -7,6 +7,8 @@ import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 import { WORD_BANK } from '../data/wordBank';
 import type { WordEntry } from '../data/wordBank';
 
@@ -29,6 +31,19 @@ function shuffle<T>(arr: T[]): T[] {
 export function Vocabulary() {
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('vocabulary'));
+
+  if (showTutorial) {
+    return (
+      <TutorialOverlay
+        show={true}
+        title="אוצר מילים חזותי"
+        emoji="🎯"
+        steps={['בחר מצב משחק: זיכרון, מהירות או זרקור 🎮', 'התאם אימוג\'י למילה באנגלית 🔤', 'נסה לענות כמה שיותר מהר! ⚡']}
+        onStart={() => { markTutorialSeen('vocabulary'); setShowTutorial(false); }}
+      />
+    );
+  }
 
   if (!selectedMode) {
     return (
@@ -209,6 +224,7 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
   const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
+  const { playCorrect, playWrong, playCombo } = useSound();
 
   const TOTAL = 10;
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -249,7 +265,12 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
 
     if (correct) {
       fireSuccess();
+      playCorrect();
       setCorrectCount(c => c + 1);
+      const currentCombo = useGameStore.getState().adaptive.combo;
+      if (currentCombo >= 3) playCombo(currentCombo);
+    } else {
+      playWrong();
     }
     setFeedback({ show: true, correct });
 
@@ -261,7 +282,7 @@ function SpeedMatchGame({ onBack }: { onBack: () => void }) {
         setShowComplete(true);
       }
     }, 800);
-  }, [targetWord, getResponseTime, recordAnswer, fireSuccess, currentIdx]);
+  }, [targetWord, getResponseTime, recordAnswer, fireSuccess, currentIdx, playCorrect, playWrong, playCombo]);
 
   if (showComplete) {
     return (
@@ -333,6 +354,7 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
   const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
+  const { playCorrect, playWrong, playCombo } = useSound();
 
   const TOTAL = 8;
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -381,7 +403,14 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
     setLastAnswer(word.word);
     setLastCorrect(correct);
 
-    if (correct) fireSuccess();
+    if (correct) {
+      fireSuccess();
+      playCorrect();
+      const currentCombo = useGameStore.getState().adaptive.combo;
+      if (currentCombo >= 3) playCombo(currentCombo);
+    } else {
+      playWrong();
+    }
     setFeedback({ show: true, correct });
 
     setTimeout(() => {
@@ -392,7 +421,7 @@ function SpotlightGame({ onBack }: { onBack: () => void }) {
         setShowComplete(true);
       }
     }, correct ? 1000 : 600);
-  }, [targetWord, getResponseTime, recordAnswer, fireSuccess, currentIdx]);
+  }, [targetWord, getResponseTime, recordAnswer, fireSuccess, currentIdx, playCorrect, playWrong, playCombo]);
 
   if (showComplete) {
     return (

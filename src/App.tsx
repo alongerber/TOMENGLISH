@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useGameStore } from './store/gameStore';
+import { AchievementToast } from './components/ui/AchievementToast';
 import { Welcome } from './routes/Welcome';
 import { Home } from './routes/Home';
 import { MagicELab } from './games/MagicELab';
@@ -17,6 +18,8 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
 function App() {
   const quietMode = useGameStore((s) => s.quietMode);
+  const pendingAchievement = useGameStore((s) => s.pendingAchievement);
+  const dismissAchievement = useGameStore((s) => s.dismissAchievement);
 
   return (
     <div className={`${quietMode ? 'quiet-mode' : ''} app-background`}>
@@ -33,6 +36,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+
+      {/* Global achievement toast */}
+      <AchievementToast achievement={pendingAchievement} onDone={dismissAchievement} />
     </div>
   );
 }

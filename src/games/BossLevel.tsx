@@ -9,6 +9,8 @@ import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { formatTime } from '../hooks/useTimer';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 import { getWordsByCategory, getClothingWords, getNumberWords, WORD_BANK } from '../data/wordBank';
 import type { WordCategory, WordEntry } from '../data/wordBank';
 
@@ -78,6 +80,8 @@ export function BossLevel() {
   const navigate = useNavigate();
   const { recordAnswer, completeBoss: completeBossStore } = useGameStore();
   const { fireBoss } = useConfetti();
+  const { playCorrect, playWrong, playBossWin, playBossLose } = useSound();
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('boss'));
 
   const [questions] = useState<BossQuestion[]>(() => generateBossQuestions(category as WordCategory));
   const [currentQ, setCurrentQ] = useState(0);
@@ -120,14 +124,17 @@ export function BossLevel() {
     if (correct) {
       setCorrectCount(c => c + 1);
       setAttemptCount(0);
+      playCorrect();
       setFeedback({ show: true, correct: true, message: '👍' });
     } else {
       const newHearts = hearts - 1;
       setHearts(newHearts);
       setAttemptCount(c => c + 1);
+      playWrong();
       setFeedback({ show: true, correct: false, message: `❤️ ${newHearts}` });
 
       if (newHearts <= 0) {
+        playBossLose();
         setTimeout(() => {
           setGameOver(true);
           setWon(false);
@@ -146,6 +153,7 @@ export function BossLevel() {
         const stars = hearts === MAX_HEARTS ? 3 : hearts >= 2 ? 2 : 1;
         completeBossStore(category as WordCategory, stars);
         fireBoss();
+        playBossWin();
         setWon(true);
         setGameOver(true);
       }
@@ -274,6 +282,13 @@ export function BossLevel() {
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />
+      <TutorialOverlay
+        show={showTutorial}
+        title="שלב בוס!"
+        emoji="👾"
+        steps={['ענה על כל השאלות לפני שהזמן נגמר ⏱️', 'יש לך 3 לבבות — כל טעות מורידה אחד ❤️', 'נצח וקבל כוכבים! ⭐⭐⭐']}
+        onStart={() => { markTutorialSeen('boss'); setShowTutorial(false); }}
+      />
     </div>
   );
 }

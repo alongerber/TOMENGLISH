@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import type { WordCategory } from '../data/wordBank';
 import type { AdaptiveState } from '../engine/adaptive';
-import { loadAdaptiveState, saveAdaptiveState, recordAnswer, completeBoss, getInitialAdaptiveState } from '../engine/adaptive';
+import { loadAdaptiveState, saveAdaptiveState, recordAnswer as computeAnswer, completeBoss as computeBoss, getInitialAdaptiveState } from '../engine/adaptive';
+import type { Achievement } from '../engine/achievements';
+import { loadUnlockedAchievements, saveUnlockedAchievements, checkAchievements } from '../engine/achievements';
 
 interface GameState {
   // Player
@@ -14,6 +16,11 @@ interface GameState {
   completeBoss: (category: WordCategory, stars: number) => void;
   completeMockTest: (score: number) => void;
   resetProgress: () => void;
+
+  // Achievements
+  unlockedAchievements: Set<string>;
+  pendingAchievement: Achievement | null;
+  dismissAchievement: () => void;
 
   // UI state
   soundEnabled: boolean;
@@ -42,6 +49,23 @@ const savePlayerName = (name: string) => {
   }
 };
 
+function checkAndQueueAchievements(
+  newAdaptive: AdaptiveState,
+  currentUnlocked: Set<string>,
+  currentPending: Achievement | null,
+): { unlockedAchievements: Set<string>; pendingAchievement: Achievement | null } {
+  const newlyUnlocked = checkAchievements(newAdaptive, currentUnlocked);
+  if (newlyUnlocked.length === 0) {
+    return { unlockedAchievements: currentUnlocked, pendingAchievement: currentPending };
+  }
+  const updated = new Set([...currentUnlocked, ...newlyUnlocked.map(a => a.id)]);
+  saveUnlockedAchievements(updated);
+  return {
+    unlockedAchievements: updated,
+    pendingAchievement: currentPending || newlyUnlocked[0],
+  };
+}
+
 export const useGameStore = create<GameState>((set) => ({
   playerName: loadPlayerName(),
   setPlayerName: (name: string) => {
@@ -51,14 +75,18 @@ export const useGameStore = create<GameState>((set) => ({
 
   adaptive: loadAdaptiveState(),
   recordAnswer: (word, category, correct, responseTimeMs) => {
-    set((state) => ({
-      adaptive: recordAnswer(state.adaptive, word, category, correct, responseTimeMs),
-    }));
+    set((state) => {
+      const newAdaptive = computeAnswer(state.adaptive, word, category, correct, responseTimeMs);
+      const ach = checkAndQueueAchievements(newAdaptive, state.unlockedAchievements, state.pendingAchievement);
+      return { adaptive: newAdaptive, ...ach };
+    });
   },
   completeBoss: (category, stars) => {
-    set((state) => ({
-      adaptive: completeBoss(state.adaptive, category, stars),
-    }));
+    set((state) => {
+      const newAdaptive = computeBoss(state.adaptive, category, stars);
+      const ach = checkAndQueueAchievements(newAdaptive, state.unlockedAchievements, state.pendingAchievement);
+      return { adaptive: newAdaptive, ...ach };
+    });
   },
   completeMockTest: (score) => {
     set((state) => {
@@ -68,7 +96,8 @@ export const useGameStore = create<GameState>((set) => ({
         mockTestScore: score,
       };
       saveAdaptiveState(newAdaptive);
-      return { adaptive: newAdaptive };
+      const ach = checkAndQueueAchievements(newAdaptive, state.unlockedAchievements, state.pendingAchievement);
+      return { adaptive: newAdaptive, ...ach };
     });
   },
   resetProgress: () => {
@@ -76,6 +105,11 @@ export const useGameStore = create<GameState>((set) => ({
     saveAdaptiveState(fresh);
     set({ adaptive: fresh });
   },
+
+  // Achievements
+  unlockedAchievements: loadUnlockedAchievements(),
+  pendingAchievement: null,
+  dismissAchievement: () => set({ pendingAchievement: null }),
 
   soundEnabled: true,
   quietMode: false,

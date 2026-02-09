@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
@@ -6,12 +7,13 @@ import type { WordCategory } from '../data/wordBank';
 import { allBossesCompleted } from '../engine/adaptive';
 import { MascotImage } from '../components/ui/MascotImage';
 import { AICoachStrip } from '../components/ui/AICoachStrip';
+import { useAnimatedNumber } from '../hooks/useAnimatedNumber';
 
-const MODULES: { id: string; category: WordCategory; title: string; subtitle: string; emoji: string; icon: string; path: string }[] = [
-  { id: 'magic-e', category: 'magic-e', title: 'מעבדת', subtitle: 'Magic E', emoji: '✨', icon: '🪄', path: '/magic-e' },
-  { id: 'sentences', category: 'clothing', title: 'בונה', subtitle: 'משפטים', emoji: '🧩', icon: '🧱', path: '/sentences' },
-  { id: 'prices', category: 'numbers', title: 'תג', subtitle: 'מחיר', emoji: '💰', icon: '🏷️', path: '/prices' },
-  { id: 'vocabulary', category: 'house', title: 'אוצר מילים', subtitle: 'חזותי', emoji: '🎯', icon: '🔍', path: '/vocabulary' },
+const MODULES: { id: string; category: WordCategory; title: string; subtitle: string; emoji: string; icon: string; iconFile: string; path: string }[] = [
+  { id: 'magic-e', category: 'magic-e', title: 'מעבדת', subtitle: 'Magic E', emoji: '✨', icon: '🪄', iconFile: 'icon-magice.png', path: '/magic-e' },
+  { id: 'sentences', category: 'clothing', title: 'בונה', subtitle: 'משפטים', emoji: '🧩', icon: '🧱', iconFile: 'icon-sentences.png', path: '/sentences' },
+  { id: 'prices', category: 'numbers', title: 'תג', subtitle: 'מחיר', emoji: '💰', icon: '🏷️', iconFile: 'icon-price.png', path: '/prices' },
+  { id: 'vocabulary', category: 'house', title: 'אוצר מילים', subtitle: 'חזותי', emoji: '🎯', icon: '🔍', iconFile: 'icon-vocab.png', path: '/vocabulary' },
 ];
 
 const MODULE_COLORS: Record<string, { bg: string; border: string; shadow: string }> = {
@@ -21,9 +23,29 @@ const MODULE_COLORS: Record<string, { bg: string; border: string; shadow: string
   'house': { bg: 'linear-gradient(145deg, #e17055 0%, #f08a6e 50%, #fab1a0 100%)', border: '#d35400', shadow: 'rgba(225, 112, 85, 0.35)' },
 };
 
+function useIconProbe(filename: string): boolean {
+  const [exists, setExists] = useState(false);
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setExists(true);
+    img.onerror = () => setExists(false);
+    img.src = `/assets/${filename}`;
+  }, [filename]);
+  return exists;
+}
+
+function ModuleIcon({ mod }: { mod: typeof MODULES[number] }) {
+  const hasIcon = useIconProbe(mod.iconFile);
+  if (hasIcon) {
+    return <img src={`/assets/${mod.iconFile}`} alt={mod.title} className="w-12 h-12 object-contain drop-shadow-md" />;
+  }
+  return <span className="text-4xl drop-shadow-md">{mod.icon}</span>;
+}
+
 export function Home() {
   const navigate = useNavigate();
   const { playerName, adaptive, soundEnabled, quietMode, toggleSound, toggleQuietMode, resetProgress } = useGameStore();
+  const animatedScore = useAnimatedNumber(adaptive.totalScore);
 
   const mockTestAvailable = allBossesCompleted(adaptive);
 
@@ -82,7 +104,7 @@ export function Home() {
               מסע הקסם באנגלית
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-white/90 text-sm font-bold">⭐ {adaptive.totalScore}</span>
+              <span className="text-white/90 text-sm font-bold">⭐ {animatedScore}</span>
               {adaptive.combo > 1 && (
                 <span className="text-amber-300 text-sm font-bold animate-pop-in">🔥 x{adaptive.combo}</span>
               )}
@@ -123,16 +145,13 @@ export function Home() {
                   boxShadow: `0 6px 0 ${colors.border}88, 0 10px 24px ${colors.shadow}`,
                 }}
               >
-                {/* Icon */}
-                <div className="text-4xl mb-2 drop-shadow-md">
-                  {mod.icon}
+                <div className="mb-2">
+                  <ModuleIcon mod={mod} />
                 </div>
 
-                {/* Title */}
                 <h3 className="font-black text-base text-white drop-shadow-sm">{mod.title}</h3>
                 <h3 className="font-black text-base text-white drop-shadow-sm mb-2">{mod.subtitle}</h3>
 
-                {/* Progress mini bar */}
                 {cat.totalAttempts > 0 && (
                   <div className="h-2 rounded-full bg-white/30 overflow-hidden mx-2">
                     <div
@@ -142,12 +161,10 @@ export function Home() {
                   </div>
                 )}
 
-                {/* Star badges */}
                 {cat.bossCompleted && (
                   <div className="text-sm mt-2">{'⭐'.repeat(cat.stars)}</div>
                 )}
 
-                {/* Boss badge */}
                 {cat.bossUnlocked && !cat.bossCompleted && (
                   <span className="absolute -top-2 -left-2 text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full shadow-lg animate-bounce-subtle">
                     👾 BOSS!

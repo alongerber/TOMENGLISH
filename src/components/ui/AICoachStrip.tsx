@@ -35,7 +35,7 @@ export function AICoachStrip({
   const lastTriggerRef = useRef<string>('');
   const idleSentRef = useRef(false);
 
-  const showMessage = useCallback((text: string, mascot: MascotState = 'idle') => {
+  const showMessageFn = useCallback((text: string, mascot: MascotState = 'idle') => {
     setMessage(text);
     setMascotState(mascot);
     setIsActive(true);
@@ -76,15 +76,15 @@ export function AICoachStrip({
       lastTriggerRef.current = key;
 
       const hint = getLocalHint(module, trigger);
-      showMessage(hint, mascot);
+      showMessageFn(hint, mascot);
     }
-  }, [isCorrect, attemptCount, streak, gameComplete, module, currentWord, showMessage]);
+  }, [isCorrect, attemptCount, streak, gameComplete, module, currentWord, showMessageFn]);
 
   // Start message on mount
   useEffect(() => {
     const hint = getLocalHint(module, 'start');
-    showMessage(hint, 'idle');
-  }, [module, showMessage]);
+    showMessageFn(hint, 'idle');
+  }, [module, showMessageFn]);
 
   // Idle timer: 15 seconds
   useEffect(() => {
@@ -95,14 +95,14 @@ export function AICoachStrip({
       if (!idleSentRef.current) {
         idleSentRef.current = true;
         const hint = getLocalHint(module, 'idle');
-        showMessage(hint, 'idle');
+        showMessageFn(hint, 'idle');
       }
     }, 15000);
 
     return () => {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
-  }, [isCorrect, attemptCount, currentWord, module, showMessage]);
+  }, [isCorrect, attemptCount, currentWord, module, showMessageFn]);
 
   const handleMoreHint = async () => {
     if (moreLoading) return;
@@ -123,45 +123,51 @@ export function AICoachStrip({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-4">
+    <div className="relative my-4">
+      {/* Mascot peeks from the right side */}
+      <motion.div
+        className="absolute -top-5 right-2 z-10"
+        animate={{ y: [0, -3, 0] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <MascotImage state={mascotState} size="sm" />
+      </motion.div>
+
       <AnimatePresence mode="wait">
         <motion.div
           key={message}
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          initial={{ opacity: 0, y: 8, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -5, scale: 0.95 }}
-          transition={{ duration: 0.3, type: 'spring', stiffness: 200, damping: 20 }}
-          className={`coach-strip ${isActive ? 'active' : ''}`}
+          exit={{ opacity: 0, y: -4, scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          className={`speech-bubble-coach ${isActive ? 'ring-2 ring-blue-200' : ''}`}
         >
-          {/* Mascot in bubble */}
-          <div className="shrink-0 animate-bounce-subtle">
-            <MascotImage state={mascotState} size="sm" />
-          </div>
+          {/* Bubble tail pointing up-right to mascot */}
+          <div className="absolute -top-[7px] right-8 w-3.5 h-3.5 bg-gradient-to-br from-blue-50 to-indigo-50/80 border-l-2 border-t-2 border-blue-100/60 rotate-45" />
 
           {/* Message */}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm leading-relaxed font-bold text-gray-700">{message}</p>
-            <AnimatePresence>
-              {showMore && moreHint && (
-                <motion.p
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="text-sm text-indigo-600 mt-1 font-bold"
-                >
-                  💡 {moreHint}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+          <p className="text-sm leading-relaxed font-bold text-gray-700">{message}</p>
 
-          {/* Golden hint button */}
+          <AnimatePresence>
+            {showMore && moreHint && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="text-sm text-indigo-600 mt-1.5 font-bold"
+              >
+                💡 {moreHint}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          {/* Hint button — compact */}
           <motion.button
             onClick={handleMoreHint}
             disabled={moreLoading}
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.92, y: 2 }}
-            className="btn-3d btn-3d-primary shrink-0 !py-2 !px-4 !text-sm !min-h-0 disabled:opacity-50"
+            whileTap={{ scale: 0.95 }}
+            className="mt-2 text-xs font-bold text-blue-500 hover:text-blue-700 bg-white/70 px-3 py-1.5 rounded-lg border border-blue-200/50 disabled:opacity-50 transition-colors"
           >
             {moreLoading ? '⏳' : '💡 רמז חכם'}
           </motion.button>

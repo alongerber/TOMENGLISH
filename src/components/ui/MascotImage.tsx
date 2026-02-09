@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 export type MascotState = 'idle' | 'celebrate' | 'encourage';
 
 interface MascotImageProps {
@@ -20,8 +22,28 @@ const SIZE_MAP = {
 };
 
 export function MascotImage({ state, size = 'md', className = '' }: MascotImageProps) {
+  const [hasImage, setHasImage] = useState<boolean | null>(null);
   const sizeClasses = SIZE_MAP[size];
+  const src = `/assets/mascot-${state}.png`;
 
+  // Probe image on mount
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHasImage(true);
+    img.onerror = () => setHasImage(false);
+    img.src = src;
+  }, [src]);
+
+  // Show PNG if available
+  if (hasImage === true) {
+    return (
+      <div className={`mascot-bubble ${sizeClasses.container} ${className} p-1`}>
+        <img src={src} alt="מלווה" className="w-full h-full object-contain rounded-full" />
+      </div>
+    );
+  }
+
+  // Emoji fallback (also shown while loading)
   return (
     <div className={`mascot-bubble ${sizeClasses.container} ${className}`}>
       <span className={sizeClasses.emoji}>{FALLBACK_EMOJIS[state]}</span>

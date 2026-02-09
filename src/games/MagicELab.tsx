@@ -9,6 +9,8 @@ import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
 import { getMagicEWords } from '../data/wordBank';
 import { pickAdaptiveWords } from '../engine/adaptive';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 
 const MAGIC_E_WORDS = getMagicEWords();
 const TOTAL_ROUNDS = 8;
@@ -40,6 +42,8 @@ export function MagicELab() {
   const { adaptive, recordAnswer } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
+  const { playCorrect, playWrong, playCombo } = useSound();
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('magic-e'));
 
   const [rounds] = useState<Round[]>(() => generateRounds(adaptive));
   const [currentRound, setCurrentRound] = useState(0);
@@ -62,6 +66,9 @@ export function MagicELab() {
     recordAnswer(round.word, 'magic-e', true, time);
     setFeedback({ show: true, correct: true, message: 'מעולה! 🎉' });
     fireSuccess();
+    playCorrect();
+    const currentCombo = useGameStore.getState().adaptive.combo;
+    if (currentCombo >= 3) playCombo(currentCombo);
     setAnswered(true);
     setAttemptCount(0);
     setTimeout(() => {
@@ -75,17 +82,18 @@ export function MagicELab() {
         setShowComplete(true);
       }
     }, 1200);
-  }, [currentRound, fireSuccess, getResponseTime, recordAnswer, round, rounds.length]);
+  }, [currentRound, fireSuccess, getResponseTime, playCombo, playCorrect, recordAnswer, round, rounds.length]);
 
   const handleWrong = useCallback(() => {
     const time = getResponseTime();
     recordAnswer(round.word, 'magic-e', false, time);
     setFeedback({ show: true, correct: false, message: 'נסה שוב!' });
+    playWrong();
     setAttemptCount(prev => prev + 1);
     setTimeout(() => {
       setFeedback({ show: false, correct: false });
     }, 800);
-  }, [getResponseTime, recordAnswer, round]);
+  }, [getResponseTime, playWrong, recordAnswer, round]);
 
   if (showComplete) {
     return (
@@ -120,6 +128,11 @@ export function MagicELab() {
 
   const baseWord = round.word === 'wake up' ? 'wak' : round.word.slice(0, -1);
   const hasE = round.word !== 'wake up';
+
+  const handleTutorialDone = () => {
+    markTutorialSeen('magic-e');
+    setShowTutorial(false);
+  };
 
   return (
     <div className="game-background min-h-screen p-4">
@@ -190,6 +203,13 @@ export function MagicELab() {
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />
+      <TutorialOverlay
+        show={showTutorial}
+        title="מעבדת Magic E"
+        emoji="✨"
+        steps={['גרור את ה-e אל המילה 👆', 'שמע איך הצליל של המילה משתנה 🔊', 'כל מילה עם e יוצרת מילה חדשה! ✨']}
+        onStart={handleTutorialDone}
+      />
     </div>
   );
 }

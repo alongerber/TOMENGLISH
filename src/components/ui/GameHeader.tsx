@@ -1,4 +1,5 @@
 import { useGameStore } from '../../store/gameStore';
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber';
 
 interface GameHeaderProps {
   title: string;
@@ -11,6 +12,7 @@ interface GameHeaderProps {
 
 export function GameHeader({ title, emoji, color = '#6C5CE7', onBack, progress, showScore = true }: GameHeaderProps) {
   const { adaptive, playerName } = useGameStore();
+  const animatedScore = useAnimatedNumber(adaptive.totalScore);
 
   return (
     <div className="glass-header px-4 py-3 mb-4">
@@ -32,7 +34,7 @@ export function GameHeader({ title, emoji, color = '#6C5CE7', onBack, progress, 
                 </span>
               )}
               <span className="text-sm font-semibold text-gray-600">
-                ⭐ {adaptive.totalScore}
+                ⭐ {animatedScore}
               </span>
               {playerName && (
                 <span className="text-xs text-gray-400">{playerName}</span>

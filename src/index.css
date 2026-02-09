@@ -535,22 +535,15 @@ h1, h2, h3, h4, .font-heading {
 /* ═══════════════════════════════════
    AI Coach — Speech bubble style
    ═══════════════════════════════════ */
-.coach-strip {
-  background: linear-gradient(135deg, #fff9e6, #fff3cc);
-  border: 3px solid #f0d060;
-  border-bottom: 5px solid #d4b030;
-  border-radius: 20px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 4px 12px rgba(240, 208, 96, 0.2);
+.speech-bubble-coach {
+  background: linear-gradient(135deg, #eff6ff 0%, rgba(238, 242, 255, 0.8) 100%);
+  border: 2px solid rgba(191, 219, 254, 0.6);
+  border-radius: 1rem;
+  padding: 1rem;
+  padding-right: 4.5rem;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
   transition: all 0.2s ease;
-}
-
-.coach-strip.active {
-  border-color: #e8c020;
-  box-shadow: 0 4px 20px rgba(240, 208, 96, 0.35);
 }
 
 /* ═══════════════════════════════════

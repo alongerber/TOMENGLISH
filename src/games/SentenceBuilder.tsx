@@ -7,6 +7,8 @@ import { AICoachStrip } from '../components/ui/AICoachStrip';
 import { useGameStore } from '../store/gameStore';
 import { useConfetti } from '../hooks/useConfetti';
 import { useTimer } from '../hooks/useTimer';
+import { useSound } from '../hooks/useSound';
+import { TutorialOverlay, hasSeenTutorial, markTutorialSeen } from '../components/ui/TutorialOverlay';
 import { getClothingWords } from '../data/wordBank';
 import type { WordEntry } from '../data/wordBank';
 
@@ -82,6 +84,8 @@ export function SentenceBuilder() {
   const { recordAnswer, adaptive } = useGameStore();
   const { fireSuccess } = useConfetti();
   const { start, getResponseTime } = useTimer();
+  const { playCorrect, playWrong, playCombo } = useSound();
+  const [showTutorial, setShowTutorial] = useState(() => !hasSeenTutorial('sentences'));
 
   const [rounds] = useState<SentenceRound[]>(generateRounds);
   const [currentRound, setCurrentRound] = useState(0);
@@ -134,8 +138,12 @@ export function SentenceBuilder() {
         setFeedback({ show: true, correct: true, message: 'מושלם! 🎉' });
         setAttemptCount(0);
         fireSuccess();
+        playCorrect();
+        const currentCombo = useGameStore.getState().adaptive.combo;
+        if (currentCombo >= 3) playCombo(currentCombo);
       } else {
         setFeedback({ show: true, correct: false, message: 'לא בדיוק... נסה שוב!' });
+        playWrong();
         setAttemptCount(c => c + 1);
       }
 
@@ -290,6 +298,13 @@ export function SentenceBuilder() {
       </div>
 
       <FeedbackOverlay show={feedback.show} correct={feedback.correct} message={feedback.message} />
+      <TutorialOverlay
+        show={showTutorial}
+        title="בונה משפטים"
+        emoji="🧩"
+        steps={['לחץ על המילים לפי הסדר הנכון 👆', 'בנה משפט שלם באנגלית 📝', 'אפשר לבטל מילה אחרונה עם ↩️']}
+        onStart={() => { markTutorialSeen('sentences'); setShowTutorial(false); }}
+      />
     </div>
   );
 }

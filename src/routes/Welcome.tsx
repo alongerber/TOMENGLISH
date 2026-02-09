@@ -1,12 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { MascotImage } from '../components/ui/MascotImage';
+
+const ONBOARDING_STEPS = [
+  { emoji: '🎮', title: '4 משחקים מגניבים', desc: 'Magic E, משפטים, מחירים ואוצר מילים' },
+  { emoji: '👾', title: 'שלבי בוס מאתגרים', desc: 'נצח את הבוסים וקבל כוכבים!' },
+  { emoji: '🏆', title: 'הישגים ומדליות', desc: 'אסוף הישגים בדרך למבחן!' },
+];
 
 export function Welcome() {
   const { playerName, setPlayerName } = useGameStore();
   const [name, setName] = useState(playerName);
+  const [onboardingStep, setOnboardingStep] = useState(0);
   const navigate = useNavigate();
 
   const handleStart = () => {
@@ -59,7 +66,7 @@ export function Welcome() {
         transition={{ type: 'spring', stiffness: 150, damping: 18 }}
         className="relative z-10 w-full max-w-md mx-4"
       >
-        {/* Mascot — large, floating above the card */}
+        {/* Mascot */}
         <motion.div
           className="flex justify-center -mb-8 relative z-20"
           animate={{ y: [0, -12, 0] }}
@@ -84,11 +91,50 @@ export function Welcome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-gray-400 mb-8 text-base font-bold"
+            className="text-gray-400 mb-5 text-base font-bold"
           >
             משחקים, לומדים, ומצליחים במבחן! ✨
           </motion.p>
 
+          {/* Onboarding feature cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="mb-5"
+          >
+            <div className="flex gap-2 justify-center mb-3">
+              {ONBOARDING_STEPS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setOnboardingStep(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    onboardingStep === i ? 'bg-blue-500 scale-125' : 'bg-gray-200'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={onboardingStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="bg-blue-50 rounded-xl p-3 flex items-center gap-3 cursor-pointer"
+                onClick={() => setOnboardingStep((onboardingStep + 1) % ONBOARDING_STEPS.length)}
+              >
+                <span className="text-2xl shrink-0">{ONBOARDING_STEPS[onboardingStep].emoji}</span>
+                <div className="text-right min-w-0">
+                  <div className="text-sm font-bold text-blue-700">{ONBOARDING_STEPS[onboardingStep].title}</div>
+                  <div className="text-xs text-blue-500">{ONBOARDING_STEPS[onboardingStep].desc}</div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Name input */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
